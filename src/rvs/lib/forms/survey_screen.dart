@@ -14,6 +14,8 @@ class SurveyScreen extends StatefulWidget {
 
 class _SurveyScreenState extends State<SurveyScreen> {
   FirebaseAuth auth = FirebaseAuth.instance;
+
+  // add new forms here
   List<Widget> tabViews = [
     const InspectorDetails(),
     const FirstForm(),
