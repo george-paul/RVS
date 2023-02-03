@@ -29,3 +29,30 @@ bool isDarkTheme(BuildContext context) {
     return false;
   }
 }
+
+class Pair<T1, T2> {
+  T1 a;
+  T2 b;
+
+  Pair(this.a, this.b);
+}
+
+// custom Widget to round corners of an expansion tile
+class ExpansionTileCard extends StatelessWidget {
+  final Widget child;
+  final double borderRadius;
+  const ExpansionTileCard({Key? key, required this.child, required this.borderRadius}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    BorderRadius br = BorderRadius.all(Radius.circular(borderRadius));
+
+    return ClipRRect(
+      borderRadius: br,
+      child: Material(
+        elevation: 1,
+        child: child,
+      ),
+    );
+  }
+}

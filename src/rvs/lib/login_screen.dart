@@ -111,7 +111,7 @@ class _LoginScreenState extends State<LoginScreen> {
     PhoneAuthCredential credential = PhoneAuthProvider.credential(verificationId: verID, smsCode: otpController.text);
     await auth.signInWithCredential(credential).then((value) {
       Fluttertoast.showToast(msg: "Signed In");
-      Navigator.pushReplacementNamed(context, "/survey");
+      Navigator.pushReplacementNamed(context, "/survey_selection");
     }).catchError((err) {
       redDBG(err);
       Fluttertoast.showToast(msg: "Something went wrong!");
@@ -242,7 +242,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Column(
                   children: [
                     Text(
-                      "Welcome to EDRI",
+                      "Welcome to RVS",
                       style: Theme.of(context).textTheme.displayMedium?.copyWith(
                             fontFamily: "Arvo",
                             color: Colors.white,
