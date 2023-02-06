@@ -22,29 +22,26 @@ final List<List<Pair<bool, String>>> structSysOptions = [
     Pair(false, "Load Bearing Masonry Structure"),
   ],
   [
-    Pair(false, "Moment Frame"),
-    Pair(false, "Moment Frame with Braces"),
-    Pair(false, "Moment Frame with Structural Walls"),
+    Pair(false, "Burnt Clay Bricks"),
+    Pair(false, "Cement Blocks"),
+    Pair(false, "Stone Blocks"),
   ],
   [
-    Pair(false, "Moment Frame"),
-    Pair(false, "Moment Frame with Braces"),
-    Pair(false, "Moment Frame with Structural Walls"),
+    Pair(false, "Igneous Rocks"),
+    Pair(false, "Sedimentary Rocks"),
+    Pair(false, "Slate Blocks"),
   ],
   [
-    Pair(false, "Moment Frame"),
-    Pair(false, "Moment Frame with Braces"),
-    Pair(false, "Moment Frame with Structural Walls"),
+    Pair(false, "Timber frame without diagonal braces"),
+    Pair(false, "Timber frame with diagonal braces"),
   ],
   [
-    Pair(false, "Moment Frame"),
-    Pair(false, "Moment Frame with Braces"),
-    Pair(false, "Moment Frame with Structural Walls"),
+    Pair(false, "Unstrengthened mud courses"),
+    Pair(false, "Slurry of wet mud"),
+    Pair(false, "Locally available grass"),
   ],
   [
-    Pair(false, "Moment Frame"),
-    Pair(false, "Moment Frame with Braces"),
-    Pair(false, "Moment Frame with Structural Walls"),
+    Pair(false, "Load Bearing Masonry Structure"),
   ],
 ];
 
@@ -60,19 +57,17 @@ final List<List<Pair<bool, String>>> floorOptions = [
   ],
   [
     Pair(false, "RC Slab"),
-    Pair(false, "Precast Planks with in-situ screed"),
   ],
   [
     Pair(false, "RC Slab"),
-    Pair(false, "Precast Planks with in-situ screed"),
+    Pair(false, "Timber planks on timber beams"),
   ],
   [
-    Pair(false, "RC Slab"),
-    Pair(false, "Precast Planks with in-situ screed"),
+    Pair(false, "Timber beams with wooden planks"),
+    Pair(false, "Timber frame with stone planks"),
   ],
   [
-    Pair(false, "RC Slab"),
-    Pair(false, "Precast Planks with in-situ screed"),
+    Pair(false, "Mud Plastered"),
   ],
   [
     Pair(false, "RC Slab"),
@@ -112,10 +107,8 @@ final List<List<Pair<bool, String>>> roofGeoOptions = [
     Pair(false, "Split"),
   ],
   [
-    Pair(false, "Flat"),
     Pair(false, "Pitched"),
     Pair(false, "Hipped"),
-    Pair(false, "Split"),
   ],
   [
     Pair(false, "Flat"),
@@ -146,16 +139,14 @@ final List<List<Pair<bool, String>>> roofMatOptions = [
     Pair(false, "Wood with Wooden Planks"),
   ],
   [
-    Pair(false, "RC Slab"),
-    Pair(false, "Wood with Clay Tiles"),
-    Pair(false, "Wood Truss with Corrugated Sheets"),
-    Pair(false, "Wood with Wooden Planks"),
+    Pair(false, "Timber truss with Timber planks"),
+    Pair(false, "Timber truss with corrugated GI sheets"),
   ],
   [
-    Pair(false, "RC Slab"),
-    Pair(false, "Wood with Clay Tiles"),
-    Pair(false, "Wood Truss with Corrugated Sheets"),
-    Pair(false, "Wood with Wooden Planks"),
+    Pair(false, "Thatch + Bamboo"),
+    Pair(false, "Wood truss with clay tiles"),
+    Pair(false, "Wood truss with corrugated sheets"),
+    Pair(false, "Wood truss with wooden planks"),
   ],
   [
     Pair(false, "RC Slab"),
@@ -185,34 +176,14 @@ final List<List<Pair<bool, String>>> mortarOptions = [
     Pair(false, "Lime"),
     Pair(false, "No Mortar"),
   ],
+  [],
+  [],
   [
     Pair(false, "Cement"),
     Pair(false, "Mud"),
     Pair(false, "Lime"),
     Pair(false, "No Mortar"),
   ],
-  [
-    Pair(false, "Cement"),
-    Pair(false, "Mud"),
-    Pair(false, "Lime"),
-    Pair(false, "No Mortar"),
-  ],
-  [
-    Pair(false, "Cement"),
-    Pair(false, "Mud"),
-    Pair(false, "Lime"),
-    Pair(false, "No Mortar"),
-  ],
-];
-
-const List<String> lifeVulnElementMask = [
-  "1111111",
-  "1110110",
-  "1111111",
-  "1110110",
-  "1110110",
-  "1111111",
-  "1110110",
 ];
 
 class Survey01Data {
@@ -243,6 +214,8 @@ class Survey01Data {
   List<bool> lifeCheckboxes = [];
 
   void calcRVS() async {
+    final int surveyNumber = GetIt.I<GlobalData>().surveyNumber;
+
     if (inspID == null) {
       Fluttertoast.showToast(msg: "Invalid Inspector ID");
       return;
@@ -267,16 +240,24 @@ class Survey01Data {
       Fluttertoast.showToast(msg: "Invalid Occupancy");
       return;
     }
-    if (structSys == null) {
+    if (structSys == null && structSysOptions[surveyNumber] != []) {
       Fluttertoast.showToast(msg: "Invalid Structural System");
       return;
     }
-    if (floor == null) {
+    if (floor == null && floorOptions[surveyNumber] != []) {
       Fluttertoast.showToast(msg: "Invalid Floor Type");
       return;
     }
-    if (roofGeo == null) {
+    if (roofGeo == null && roofGeoOptions[surveyNumber] != []) {
       Fluttertoast.showToast(msg: "Invalid Roof Geometry");
+      return;
+    }
+    if (roofMat == null && roofMatOptions[surveyNumber] != []) {
+      Fluttertoast.showToast(msg: "Invalid Roof Material");
+      return;
+    }
+    if (mortar == null && mortarOptions[surveyNumber] != []) {
+      Fluttertoast.showToast(msg: "Invalid Mortar");
       return;
     }
 
@@ -287,8 +268,7 @@ class Survey01Data {
     }
 
     // assemble life threatening rows
-    List<vuln.VulnElement> lifeElements =
-        vuln.getFormVulnElements(vuln.possibleLifeThreatening, lifeVulnElementMask[GetIt.I<GlobalData>().surveyNumber]);
+    List<vuln.VulnElement> lifeElements = vuln.getFormVulnElements(vuln.possibleLifeThreatening, surveyNumber);
     List<List<String>> tempRows = [[], [], []];
     for (int i = 0; i < lifeElements.length; i++) {
       VulnElement ele = lifeElements[i];
@@ -401,7 +381,7 @@ class Survey01Data {
                       headerCount: 0,
                       data: [
                         ["Building Address", "$buildingName, \n$addressLine1, \n$addressLine2, \n$addressCityTown"],
-                        ["Occupancy Type", "$occupancyString $subOccupancyString"],
+                        ["Occupancy Type", "$occupancyString$subOccupancyString"],
                       ],
                     ),
                     pw.SizedBox(height: 30),

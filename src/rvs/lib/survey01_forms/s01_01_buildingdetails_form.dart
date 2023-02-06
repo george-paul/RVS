@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:rvs/survey01_forms/survey01_data.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -110,7 +111,24 @@ class _S01BuildingDescriptionFormState extends State<S01BuildingDescriptionForm>
   // -------------------------------------- Views Of Structure --------------------------------------
   //
   void takeStructureViewPicture(int index) async {
-    final File imgFile = await Navigator.push(context, MaterialPageRoute(builder: (context) => const CameraPage()));
+    File? imgFile;
+    try {
+      imgFile = await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const CameraPage(),
+        ),
+      ).catchError((e) {
+        Fluttertoast.showToast(msg: "Could not take picture");
+      });
+    } catch (e) {
+      Fluttertoast.showToast(msg: "Could not take picture");
+      return;
+    }
+    if (imgFile == null) {
+      Fluttertoast.showToast(msg: "Did not save picture");
+      return;
+    }
     Directory appDocDir = await getApplicationDocumentsDirectory();
     await imgFile.copy("${appDocDir.path}/StructureView${index.toString()}");
 
