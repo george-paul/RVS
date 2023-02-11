@@ -192,6 +192,7 @@ class Survey01Data {
   String? inspID;
   String? inspDate;
   String? inspTime;
+  String? coords;
 
   // form 01
   String? buildingName;
@@ -221,16 +222,20 @@ class Survey01Data {
       Fluttertoast.showToast(msg: "Invalid Inspector ID");
       return;
     }
+    if (coords == null) {
+      Fluttertoast.showToast(msg: "Invalid Location");
+      return;
+    }
     if (buildingName == null) {
       Fluttertoast.showToast(msg: "Invalid Building Name");
       return;
     }
     if (addressLine1 == null) {
-      Fluttertoast.showToast(msg: "Invalid Adress");
+      Fluttertoast.showToast(msg: "Invalid Address");
       return;
     }
     if (addressLine2 == null) {
-      Fluttertoast.showToast(msg: "Invalid Adress");
+      Fluttertoast.showToast(msg: "Invalid Address");
       return;
     }
     if (addressCityTown == null) {
@@ -280,7 +285,8 @@ class Survey01Data {
         }
       }
     }
-    // basically transpose for pdf purposes
+
+    // do a transpose for pdf displaying purposes
     List<List<String>> pdfTableRows = [];
     for (int colorIdx = 0; colorIdx < tempRows.length; colorIdx++) {
       List<String> color = tempRows[colorIdx];
@@ -290,6 +296,16 @@ class Survey01Data {
           pdfTableRows.add(["", "", ""]);
         }
         pdfTableRows[i][colorIdx] = ele;
+      }
+    }
+    // remove empty cells
+    for (int i = 0; i < pdfTableRows.length; i++) {
+      List<String> row = pdfTableRows[i];
+      for (int j = 0; j < row.length; j++) {
+        if (row[j] == "") {
+          pdfTableRows[i].removeAt(j);
+          j--;
+        }
       }
     }
 
@@ -329,7 +345,7 @@ class Survey01Data {
           fontSize: 24,
         ),
         header2: pw.TextStyle(
-          font: pw.Font.helveticaOblique(),
+          font: pw.Font.helveticaBold(),
           fontSize: 15,
         ),
         header5: pw.TextStyle(
@@ -368,31 +384,18 @@ class Survey01Data {
                   ),
                 ),
                 pw.SizedBox(height: 50),
-                pw.Align(
-                  alignment: pw.Alignment.centerLeft,
-                  child: pw.Text(
-                    "Building Details",
-                    textAlign: pw.TextAlign.left,
-                    style: pw.Theme.of(context).header2,
-                  ),
-                ),
+                pdfSubheading("Building Details", context),
                 pw.SizedBox(height: 20),
                 pw.Table.fromTextArray(
                   headerCount: 0,
                   data: [
+                    ["Building GPS Coordinates", coords],
                     ["Building Address", "$buildingName, \n$addressLine1, \n$addressLine2, \n$addressCityTown"],
                     ["Occupancy Type", "$occupancyString$subOccupancyString"],
                   ],
                 ),
                 pw.SizedBox(height: 30),
-                pw.Align(
-                  alignment: pw.Alignment.centerLeft,
-                  child: pw.Text(
-                    "Structural Details",
-                    textAlign: pw.TextAlign.center,
-                    style: pw.Theme.of(context).header2,
-                  ),
-                ),
+                pdfSubheading("Structural Details", context),
                 pw.SizedBox(height: 20),
                 pw.Table.fromTextArray(
                   headerCount: 0,
@@ -405,14 +408,7 @@ class Survey01Data {
                   ],
                 ),
                 pw.SizedBox(height: 30),
-                pw.Align(
-                  alignment: pw.Alignment.centerLeft,
-                  child: pw.Text(
-                    "Life Threatening Parameters",
-                    textAlign: pw.TextAlign.center,
-                    style: pw.Theme.of(context).header2,
-                  ),
-                ),
+                pdfSubheading("Life Threatening Parameters", context),
                 pw.SizedBox(height: 20),
                 pw.Table.fromTextArray(
                   headerCount: 0,
@@ -480,16 +476,21 @@ class Survey01Data {
     //
     String timeString = DateTime.now().toIso8601String().substring(0, 19).replaceAll(RegExp(r"\D"), "");
 
-    var status = await Permission.manageExternalStorage.request();
-    if (!status.isGranted) {
-      Fluttertoast.showToast(msg: "External storage permission not granted");
-      return;
-    }
-
     Directory saveDir = await Directory('/storage/emulated/0/Download/RVSreports').create();
     File file = await File('${saveDir.path}/${timeString}_RVSReport.pdf').create();
     await file.writeAsBytes(await pdf.save());
 
     Fluttertoast.showToast(msg: "Generated PDF at Downloads");
+  }
+
+  pw.Align pdfSubheading(String text, context) {
+    return pw.Align(
+      alignment: pw.Alignment.centerLeft,
+      child: pw.Text(
+        text,
+        textAlign: pw.TextAlign.left,
+        style: pw.Theme.of(context).header2,
+      ),
+    );
   }
 }

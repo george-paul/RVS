@@ -1,11 +1,8 @@
-import 'dart:io';
-
-import 'package:path_provider/path_provider.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:location/location.dart';
 import 'package:rvs/survey01_forms/survey01_data.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-
-import '../camera_screen.dart';
 
 class S01InspectorDetailsForm extends StatefulWidget {
   const S01InspectorDetailsForm({Key? key}) : super(key: key);
@@ -23,6 +20,8 @@ class _S01InspectorDetailsFormState extends State<S01InspectorDetailsForm> with 
   TextEditingController inspIDCtl = TextEditingController();
   TextEditingController dateCtl = TextEditingController();
   TextEditingController timeCtl = TextEditingController();
+  TextEditingController coordsCtl = TextEditingController();
+  bool isLoadingLocation = false;
 
   @override
   void initState() {
@@ -34,11 +33,97 @@ class _S01InspectorDetailsFormState extends State<S01InspectorDetailsForm> with 
     super.initState();
   }
 
+  Future<LocationData?> getLocation() async {
+    Location location = Location();
+
+    bool serviceEnabled;
+    serviceEnabled = await location.serviceEnabled();
+    if (!serviceEnabled) {
+      serviceEnabled = await location.requestService();
+      if (!serviceEnabled) {
+        Fluttertoast.showToast(msg: "Please enable location services");
+        return null;
+      }
+    }
+
+    PermissionStatus permissionGranted;
+    permissionGranted = await location.hasPermission();
+    if (permissionGranted == PermissionStatus.denied) {
+      permissionGranted = await location.requestPermission();
+      if (permissionGranted != PermissionStatus.granted) {
+        Fluttertoast.showToast(msg: "Please grant access to location data");
+        return null;
+      }
+    }
+    if (permissionGranted == PermissionStatus.deniedForever) {
+      Fluttertoast.showToast(msg: "Please grant access to location data in app settings");
+      return null;
+    }
+
+    LocationData locationData;
+    locationData = await location.getLocation();
+    return locationData;
+  }
+
+  Widget buildGetLocationButton() {
+    return ElevatedButton(
+      onPressed: () async {
+        setState(() {
+          isLoadingLocation = true;
+        });
+        LocationData? location = await getLocation();
+        if (location != null) {
+          coordsCtl.text = "${location.latitude!.toStringAsFixed(5)}, ${location.longitude!.toStringAsFixed(5)}";
+          GetIt.I<Survey01Data>().coords = coordsCtl.text;
+        }
+        setState(() {
+          isLoadingLocation = false;
+        });
+      },
+      child: Visibility(
+        visible: !isLoadingLocation,
+        replacement: SizedBox(
+          width: Theme.of(context).textTheme.button!.fontSize,
+          height: Theme.of(context).textTheme.button!.fontSize,
+          child: CircularProgressIndicator(
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
+        ),
+        child: const Text("Get Location"),
+      ),
+    );
+  }
+
+  TextFormField buildCoords() {
+    return TextFormField(
+      readOnly: true,
+      controller: coordsCtl,
+      decoration: const InputDecoration(
+        border: OutlineInputBorder(),
+        icon: Icon(Icons.location_on),
+        labelText: "GPS Position",
+      ),
+    );
+  }
+
+  TextFormField buildInspId() {
+    return TextFormField(
+      onChanged: (val) {
+        GetIt.I<Survey01Data>().inspID = val.trim();
+      },
+      controller: inspIDCtl,
+      decoration: const InputDecoration(
+        border: OutlineInputBorder(),
+        icon: Icon(Icons.person),
+        labelText: "Inspector ID",
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
     return Form(
-      // siddharth: why scrollbar
       child: Scrollbar(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
@@ -47,18 +132,9 @@ class _S01InspectorDetailsFormState extends State<S01InspectorDetailsForm> with 
               padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 5),
               child: Column(
                 children: [
-                  TextFormField(
-                    onChanged: (val) {
-                      GetIt.I<Survey01Data>().inspID = val.trim();
-                    },
-                    controller: inspIDCtl,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      icon: Icon(Icons.person),
-                      labelText: "Inspector ID",
-                    ),
-                  ),
+                  buildInspId(),
                   const SizedBox(height: 20),
+                  // Date Selection
                   TextFormField(
                     onChanged: (val) {},
                     readOnly: true,
@@ -70,8 +146,6 @@ class _S01InspectorDetailsFormState extends State<S01InspectorDetailsForm> with 
                     ),
                     onTap: () async {
                       DateTime? date = DateTime(1900);
-                      // siddharth: why request focus
-                      // FocusScope.of(context).requestFocus(FocusNode());
                       date = await showDatePicker(
                         context: context,
                         initialDate: DateTime.now(),
@@ -85,6 +159,7 @@ class _S01InspectorDetailsFormState extends State<S01InspectorDetailsForm> with 
                     },
                   ),
                   const SizedBox(height: 20),
+                  // Time Selection
                   TextFormField(
                     readOnly: true,
                     controller: timeCtl,
@@ -95,7 +170,6 @@ class _S01InspectorDetailsFormState extends State<S01InspectorDetailsForm> with 
                     ),
                     onTap: () async {
                       TimeOfDay time = TimeOfDay.now();
-                      // FocusScope.of(context).requestFocus(new FocusNode());
                       TimeOfDay? picked = await showTimePicker(
                         context: context,
                         initialTime: time,
@@ -119,6 +193,10 @@ class _S01InspectorDetailsFormState extends State<S01InspectorDetailsForm> with 
                       return null;
                     },
                   ),
+                  const SizedBox(height: 20),
+                  buildGetLocationButton(),
+                  const SizedBox(height: 20),
+                  buildCoords(),
                 ],
               ),
             ),
