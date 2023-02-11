@@ -72,7 +72,7 @@ class _S01StructSysFormState extends State<S01StructSysForm> with AutomaticKeepA
       child: ExpansionTile(
         tilePadding: const EdgeInsets.all(20),
         title: Text(
-          "Floor Type",
+          "Floor",
           style: Theme.of(context).textTheme.headline6,
         ),
         subtitle: Text(
@@ -213,19 +213,20 @@ class _S01StructSysFormState extends State<S01StructSysForm> with AutomaticKeepA
         child: Column(
           children: [
             buildStructSysSelector(),
-            SizedBox(height: 20),
-            buildFloorSelector(),
+            const SizedBox(height: 20),
             Padding(
               padding: const EdgeInsets.fromLTRB(10.0, 40.0, 20.0, 20.0),
               child: Align(
                 alignment: Alignment.centerLeft,
-                child: Text("Roof", style: Theme.of(context).textTheme.headline5),
+                child: Text("Structural Components", style: Theme.of(context).textTheme.headline5),
               ),
             ),
+            buildFloorSelector(),
+            const SizedBox(height: 20),
             buildRoofGeoSelector(),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             if (roofMatOptions[surveyNumber].isNotEmpty) buildRoofMatSelector(),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             if (mortarOptions[surveyNumber].isNotEmpty) buildMortarSelector(),
           ],
         ),

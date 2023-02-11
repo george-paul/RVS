@@ -327,6 +327,7 @@ class _S01BuildingDescriptionFormState extends State<S01BuildingDescriptionForm>
       child: ExpansionTileCard(
         borderRadius: borderRadiusCached.bottomLeft.x, // equates to the .all.circular's value
         child: ExpansionTile(
+          initiallyExpanded: true,
           tilePadding: const EdgeInsets.all(20),
           title: Text(
             "Select $selectedOccupancyString Occupancy",

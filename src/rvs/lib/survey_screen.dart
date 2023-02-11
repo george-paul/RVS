@@ -36,7 +36,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
     tabTitles = [
       "Inspector Details",
       "Building Description",
-      "Structural Details",
+      "Structural System and Components",
       "Vulnerability",
       "Submit",
     ];
