@@ -198,7 +198,7 @@ class Survey01Data {
   String? addressLine1;
   String? addressLine2;
   String? addressCityTown;
-  List<bool> picturesTaken = [true, true, true, true];
+  List<bool> picturesTaken = [false, false, false, false];
   int? occupancy;
   String? occupancyString;
   int? subOccupancy;
@@ -235,10 +235,6 @@ class Survey01Data {
     }
     if (addressCityTown == null) {
       Fluttertoast.showToast(msg: "Invalid Adress");
-      return;
-    }
-    if (picturesTaken.any((element) => !element)) {
-      Fluttertoast.showToast(msg: "Complete structure view photographs");
       return;
     }
     if (occupancy == null) {
