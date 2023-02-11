@@ -200,6 +200,7 @@ class Survey01Data {
   String? addressLine2;
   String? addressCityTown;
   List<bool> picturesTaken = [false, false, false, false];
+  int extraPicturesNumber = 0;
   int? occupancy;
   String? occupancyString;
   int? subOccupancy;
@@ -474,13 +475,28 @@ class Survey01Data {
     //
     //----------------------------- Save PDF -----------------------------
     //
-    String timeString = DateTime.now().toIso8601String().substring(0, 19).replaceAll(RegExp(r"\D"), "");
+    String timeString = "$inspDate$inspTime".replaceAll(RegExp(r"\D"), "");
 
-    Directory saveDir = await Directory('/storage/emulated/0/Download/RVSreports').create();
-    File file = await File('${saveDir.path}/${timeString}_RVSReport.pdf').create();
+    Directory saveDir = await Directory("/storage/emulated/0/Download/RVSreports").create();
+    File file = await File("${saveDir.path}/${timeString}_RVSReport.pdf").create();
     await file.writeAsBytes(await pdf.save());
 
-    Fluttertoast.showToast(msg: "Generated PDF at Downloads");
+    //
+    //----------------------------- Save Images -----------------------------
+    //
+    Directory viewsDir = await getApplicationDocumentsDirectory();
+    viewsDir = Directory("${viewsDir.path}/Views");
+    List<FileSystemEntity> files = viewsDir.listSync();
+    for (FileSystemEntity file in files) {
+      int substringCutIndex = file.path.indexOf(RegExp(r"StructureView"));
+      if (substringCutIndex != -1) {
+        file = file as File;
+        await file.copy("${saveDir.path}/${timeString}_${file.path.substring(substringCutIndex)}");
+        file.deleteSync();
+      }
+    }
+
+    Fluttertoast.showToast(msg: "Generated results at Downloads");
   }
 
   pw.Align pdfSubheading(String text, context) {
