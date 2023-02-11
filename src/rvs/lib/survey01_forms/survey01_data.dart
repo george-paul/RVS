@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:rvs/global_data.dart';
@@ -213,8 +214,14 @@ class Survey01Data {
   String? roofMat; // Can stay null
   String? mortar; // Can stay null
 
+  // calculation form
+  bool calcDone = false;
+  String suggestedInterventions = "";
+
   // form 04
   List<bool> lifeCheckboxes = [];
+  bool buildingToBeQuarantined = false;
+  bool detailedScreening = false;
 
   void calcRVS() async {
     final int surveyNumber = GetIt.I<GlobalData>().surveyNumber;
@@ -269,7 +276,7 @@ class Survey01Data {
     }
 
     if (subOccupancyString != null) {
-      subOccupancyString = " - $subOccupancyString";
+      if (!subOccupancyString!.contains("-")) subOccupancyString = " - $subOccupancyString";
     } else {
       subOccupancyString = "";
     }
@@ -310,24 +317,18 @@ class Survey01Data {
       }
     }
 
-    //
-    //----------------------------- Structure Views -----------------------------
-    //
-
-    // if (picturesTaken.any((element) => !element)) {
-    //   Fluttertoast.showToast(msg: "Complete structure view photographs");
-    //   return;
-    // }
-
-    // Directory appDocDir = await getApplicationDocumentsDirectory();
-    // final topImage = await File("${appDocDir.path}/StructureView${0.toString()}").readAsBytes();
-    // final topView = pw.MemoryImage(topImage);
-    // final leftImage = await File("${appDocDir.path}/StructureView${1.toString()}").readAsBytes();
-    // final leftView = pw.MemoryImage(leftImage);
-    // final rightImage = await File("${appDocDir.path}/StructureView${2.toString()}").readAsBytes();
-    // final rightView = pw.MemoryImage(rightImage);
-    // final bottomImage = await File("${appDocDir.path}/StructureView${3.toString()}").readAsBytes();
-    // final bottomView = pw.MemoryImage(bottomImage);
+    String colourRating = "";
+    Color colourRatingColor = Colors.black;
+    if (tempRows[0].isNotEmpty) {
+      colourRating = "Red";
+      colourRatingColor = Colors.red.shade800;
+    } else if (tempRows[1].isNotEmpty) {
+      colourRating = "Yellow";
+      colourRatingColor = Colors.yellow.shade800;
+    } else {
+      colourRating = "Green";
+      colourRatingColor = Colors.green.shade800;
+    }
 
     //
     //----------------------------- create PDF -----------------------------
@@ -386,7 +387,7 @@ class Survey01Data {
                 ),
                 pw.SizedBox(height: 50),
                 pdfSubheading("Building Details", context),
-                pw.SizedBox(height: 20),
+                pw.SizedBox(height: 10),
                 pw.Table.fromTextArray(
                   headerCount: 0,
                   data: [
@@ -397,7 +398,7 @@ class Survey01Data {
                 ),
                 pw.SizedBox(height: 30),
                 pdfSubheading("Structural Details", context),
-                pw.SizedBox(height: 20),
+                pw.SizedBox(height: 10),
                 pw.Table.fromTextArray(
                   headerCount: 0,
                   data: [
@@ -410,30 +411,68 @@ class Survey01Data {
                 ),
                 pw.SizedBox(height: 30),
                 pdfSubheading("Life Threatening Parameters", context),
-                pw.SizedBox(height: 20),
+                pw.SizedBox(height: 10),
+                if (pdfTableRows.isNotEmpty)
+                  pw.Table.fromTextArray(
+                    headerCount: 0,
+                    cellDecoration: (c, data, r) {
+                      if (r == 0) {
+                        if (c == 0) {
+                          return pw.BoxDecoration(color: PdfColor.fromInt(0xa0ff5555));
+                        } else if (c == 1) {
+                          return pw.BoxDecoration(color: PdfColor.fromInt(0xa0fff24f));
+                        } else /* if (c == 2)*/ {
+                          return pw.BoxDecoration(color: PdfColor.fromInt(0xa090ff4f));
+                        }
+                      } else {
+                        return pw.BoxDecoration();
+                      }
+                    },
+                    data: [
+                      [
+                        if (tempRows[0].isNotEmpty) "Red (Unusable)",
+                        if (tempRows[1].isNotEmpty) "Yellow (Usable with Temporary interventions)",
+                        if (tempRows[2].isNotEmpty) "Green (Usable)",
+                      ],
+                      ...pdfTableRows,
+                    ],
+                  )
+                else
+                  pw.Text("None"),
+                pw.SizedBox(height: 30),
+                pdfSubheading("Final Colour Rating", context),
+                pw.SizedBox(height: 10),
+                pw.Row(
+                  crossAxisAlignment: pw.CrossAxisAlignment.center,
+                  mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
+                  children: [
+                    pw.Text("This structure is rated: "),
+                    pw.Text(
+                      colourRating,
+                      style: pw.TextStyle(
+                        color: PdfColor.fromInt(colourRatingColor.value),
+                        fontSize: 20,
+                        fontWeight: pw.FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                pw.SizedBox(height: 30),
+                pdfSubheading("Recommended Further Actions", context),
+                pw.SizedBox(height: 10),
                 pw.Table.fromTextArray(
                   headerCount: 0,
-                  cellDecoration: (c, data, r) {
-                    if (r == 0) {
-                      if (c == 0) {
-                        return pw.BoxDecoration(color: PdfColor.fromInt(0xa0ff5555));
-                      } else if (c == 1) {
-                        return pw.BoxDecoration(color: PdfColor.fromInt(0xa0fff24f));
-                      } else /* if (c == 2)*/ {
-                        return pw.BoxDecoration(color: PdfColor.fromInt(0xa090ff4f));
-                      }
-                    } else {
-                      return pw.BoxDecoration();
-                    }
-                  },
                   data: [
-                    [
-                      if (tempRows[0].isNotEmpty) "Red (Unusable)",
-                      if (tempRows[1].isNotEmpty) "Yellow (Usable with Temporary interventions)",
-                      if (tempRows[2].isNotEmpty) "Green (Usable)",
-                    ],
-                    ...pdfTableRows,
+                    ["Building is to be quarantined?", (buildingToBeQuarantined) ? "Yes" : "No"],
+                    ["Level 2 Detailed Screening is required?", (detailedScreening) ? "Yes" : "No"],
                   ],
+                ),
+                pw.SizedBox(height: 30),
+                pdfSubheading("Suggested Interventions", context),
+                pw.SizedBox(height: 10),
+                pw.Text(
+                  (suggestedInterventions == "") ? "None" : suggestedInterventions,
+                  textAlign: pw.TextAlign.left,
                 ),
               ],
             ),
@@ -441,36 +480,6 @@ class Survey01Data {
         },
       ),
     );
-
-    // ------------------------------------- structure views in PDF -------------------------------------
-    // pdf.addPage(
-    //   pw.Page(
-    //     pageTheme: pageTheme,
-    //     build: (pw.Context context) {
-    //       return pw.Column(
-    //         children: [
-    //           pw.Text("Structure Views: ", style: pw.Theme.of(context).header2),
-    //           pw.Expanded(
-    //             child: pw.GridView(
-    //               crossAxisCount: 3,
-    //               children: [
-    //                 pw.Container(width: 100),
-    //                 pw.Image(topView, width: 100),
-    //                 pw.Container(width: 100),
-    //                 pw.Image(leftView, width: 100),
-    //                 pw.Container(width: 100),
-    //                 pw.Image(rightView, width: 100),
-    //                 pw.Container(width: 100),
-    //                 pw.Image(bottomView, width: 100),
-    //                 pw.Container(width: 100),
-    //               ],
-    //             ),
-    //           ),
-    //         ],
-    //       );
-    //     },
-    //   ),
-    // );
 
     //
     //----------------------------- Save PDF -----------------------------

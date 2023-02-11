@@ -1,11 +1,13 @@
 import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
+import 'package:rvs/vulnerability_data.dart';
 
 import './global_data.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
+import 'survey01_forms/survey01_data.dart';
 import 'survey01_forms/survey01_export.dart';
 
 class SurveyScreen extends StatefulWidget {
@@ -43,6 +45,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
       const S01BuildingDescriptionForm(),
       const S01StructSysForm(),
       const S01VulnerabilityForm(),
+      const CalculationForm(),
       const S01SubmitForm(),
     ];
     tabTitles = [
@@ -50,6 +53,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
       "Building Description",
       "Structural System and Components",
       "Vulnerability",
+      "Calculation",
       "Submit",
     ];
 
@@ -60,6 +64,10 @@ class _SurveyScreenState extends State<SurveyScreen> {
     });
 
     clearViewsDirectory();
+
+    int surveyNumber = GetIt.I<GlobalData>().surveyNumber;
+    List<VulnElement> lifeFormVulnElements = getFormVulnElements(possibleLifeThreatening, surveyNumber);
+    GetIt.I<Survey01Data>().lifeCheckboxes.addAll(List.filled(lifeFormVulnElements.length, false));
     super.initState();
   }
 
