@@ -24,6 +24,9 @@ class _S01SubmitFormState extends State<S01SubmitForm> {
   }
 
   void generatePDF() async {
+    setState(() {
+      calcDone = false;
+    }); // to refresh calcDone
     GetIt.I<Survey01Data>().calcRVS();
   }
 
@@ -36,9 +39,7 @@ class _S01SubmitFormState extends State<S01SubmitForm> {
           children: [
             Spacer(),
             Text(
-              (calcDone)
-                  ? "Generate your report with this button: "
-                  : "Report generation is disabled until rating calculation is done in the previous page.",
+              (calcDone) ? "Generate your report with this button: " : "Run a rating calculation to generate a report.",
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 10),

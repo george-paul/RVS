@@ -46,6 +46,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
       const S01StructSysForm(),
       const S01VulnerabilityForm(),
       const CalculationForm(),
+      const FurtherActionsForm(),
       const S01SubmitForm(),
     ];
     tabTitles = [
@@ -54,6 +55,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
       "Structural System and Components",
       "Vulnerability",
       "Calculation",
+      "Further Actions",
       "Submit",
     ];
 
@@ -68,6 +70,8 @@ class _SurveyScreenState extends State<SurveyScreen> {
     int surveyNumber = GetIt.I<GlobalData>().surveyNumber;
     List<VulnElement> lifeFormVulnElements = getFormVulnElements(possibleLifeThreatening, surveyNumber);
     GetIt.I<Survey01Data>().lifeCheckboxes.addAll(List.filled(lifeFormVulnElements.length, false));
+    List<VulnElement> ecoFormVulnElements = getFormVulnElements(possibleEconomicLoss, surveyNumber);
+    GetIt.I<Survey01Data>().ecoCheckboxes.addAll(List.filled(ecoFormVulnElements.length, false));
     super.initState();
   }
 

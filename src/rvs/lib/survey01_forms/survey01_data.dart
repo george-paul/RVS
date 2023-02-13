@@ -220,10 +220,12 @@ class Survey01Data {
 
   // form 04
   List<bool> lifeCheckboxes = [];
+  List<bool> ecoCheckboxes = [];
   bool buildingToBeQuarantined = false;
   bool detailedScreening = false;
 
   void calcRVS() async {
+    GetIt.I<Survey01Data>().calcDone = false;
     final int surveyNumber = GetIt.I<GlobalData>().surveyNumber;
 
     if (inspID == null) {
@@ -254,6 +256,12 @@ class Survey01Data {
       Fluttertoast.showToast(msg: "Invalid Occupancy");
       return;
     }
+
+    if (picturesTaken.contains(false)) {
+      Fluttertoast.showToast(msg: "Complete the structure view photographs");
+      return;
+    }
+
     if (structSys == null && structSysOptions[surveyNumber].isNotEmpty) {
       Fluttertoast.showToast(msg: "Invalid Structural System");
       return;
@@ -281,7 +289,7 @@ class Survey01Data {
       subOccupancyString = "";
     }
 
-    // assemble life threatening rows
+    // assemble factors temp rows
     List<vuln.VulnElement> lifeElements = vuln.getFormVulnElements(vuln.possibleLifeThreatening, surveyNumber);
     List<List<String>> tempRows = [[], [], []];
     for (int i = 0; i < lifeElements.length; i++) {
@@ -289,6 +297,17 @@ class Survey01Data {
       if (ele.runtimeType == VulnQuestion) {
         ele = ele as VulnQuestion;
         if (lifeCheckboxes[i]) {
+          tempRows[ele.color.index].add(ele.text);
+        }
+      }
+    }
+
+    List<vuln.VulnElement> ecoElements = vuln.getFormVulnElements(vuln.possibleEconomicLoss, surveyNumber);
+    for (int i = 0; i < ecoElements.length; i++) {
+      VulnElement ele = ecoElements[i];
+      if (ele.runtimeType == VulnQuestion) {
+        ele = ele as VulnQuestion;
+        if (ecoCheckboxes[i]) {
           tempRows[ele.color.index].add(ele.text);
         }
       }
@@ -320,13 +339,13 @@ class Survey01Data {
     String colourRating = "";
     Color colourRatingColor = Colors.black;
     if (tempRows[0].isNotEmpty) {
-      colourRating = "Red";
+      colourRating = "Red - The structure is unusable";
       colourRatingColor = Colors.red.shade800;
     } else if (tempRows[1].isNotEmpty) {
-      colourRating = "Yellow";
+      colourRating = "Yellow - The structure is usable \nwith temporary interventions";
       colourRatingColor = Colors.yellow.shade800;
     } else {
-      colourRating = "Green";
+      colourRating = "Green - Usable";
       colourRatingColor = Colors.green.shade800;
     }
 
@@ -391,6 +410,7 @@ class Survey01Data {
                 pw.Table.fromTextArray(
                   headerCount: 0,
                   data: [
+                    ["Building Type", surveyTitles[surveyNumber]],
                     ["Building GPS Coordinates", coords],
                     ["Building Address", "$buildingName, \n$addressLine1, \n$addressLine2, \n$addressCityTown"],
                     ["Occupancy Type", "$occupancyString$subOccupancyString"],
@@ -416,10 +436,11 @@ class Survey01Data {
                   pw.Table.fromTextArray(
                     headerCount: 0,
                     cellDecoration: (c, data, r) {
+                      data = data as String;
                       if (r == 0) {
-                        if (c == 0) {
+                        if (data.contains("Red")) {
                           return pw.BoxDecoration(color: PdfColor.fromInt(0xa0ff5555));
-                        } else if (c == 1) {
+                        } else if (data.contains("Yellow")) {
                           return pw.BoxDecoration(color: PdfColor.fromInt(0xa0fff24f));
                         } else /* if (c == 2)*/ {
                           return pw.BoxDecoration(color: PdfColor.fromInt(0xa090ff4f));
@@ -446,7 +467,7 @@ class Survey01Data {
                   crossAxisAlignment: pw.CrossAxisAlignment.center,
                   mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
                   children: [
-                    pw.Text("This structure is rated: "),
+                    // pw.Text("This structure is rated: "),
                     pw.Text(
                       colourRating,
                       style: pw.TextStyle(

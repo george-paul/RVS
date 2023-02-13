@@ -28,6 +28,7 @@ class _CalculationFormState extends State<CalculationForm> with AutomaticKeepAli
     suggIntCtl.text = "";
 
     List<bool> lifeCheckboxes = GetIt.I<Survey01Data>().lifeCheckboxes;
+    List<bool> ecoCheckboxes = GetIt.I<Survey01Data>().ecoCheckboxes;
     int surveyNumber = GetIt.I<GlobalData>().surveyNumber;
 
     List<VulnElement> lifeElements = getFormVulnElements(possibleLifeThreatening, surveyNumber);
@@ -37,6 +38,17 @@ class _CalculationFormState extends State<CalculationForm> with AutomaticKeepAli
       if (ele.runtimeType == VulnQuestion) {
         ele = ele as VulnQuestion;
         if (lifeCheckboxes[i]) {
+          tempRows[ele.color.index].add(ele.text);
+        }
+      }
+    }
+
+    List<VulnElement> ecoElements = getFormVulnElements(possibleEconomicLoss, surveyNumber);
+    for (int i = 0; i < ecoElements.length; i++) {
+      VulnElement ele = ecoElements[i];
+      if (ele.runtimeType == VulnQuestion) {
+        ele = ele as VulnQuestion;
+        if (ecoCheckboxes[i]) {
           tempRows[ele.color.index].add(ele.text);
         }
       }
@@ -104,7 +116,6 @@ class _CalculationFormState extends State<CalculationForm> with AutomaticKeepAli
               },
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
-                // hintText: "Enter a number",
               ),
               controller: suggIntCtl,
             ),
