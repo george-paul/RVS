@@ -6,10 +6,10 @@ class FurtherActionsForm extends StatefulWidget {
   const FurtherActionsForm({Key? key}) : super(key: key);
 
   @override
-  _FurtherActionsFormState createState() => _FurtherActionsFormState();
+  FurtherActionsFormState createState() => FurtherActionsFormState();
 }
 
-class _FurtherActionsFormState extends State<FurtherActionsForm> with AutomaticKeepAliveClientMixin {
+class FurtherActionsFormState extends State<FurtherActionsForm> with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
   static const BorderRadius borderRadiusCached = BorderRadius.all(Radius.circular(20.0));

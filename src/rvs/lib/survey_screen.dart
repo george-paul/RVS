@@ -1,6 +1,3 @@
-import 'dart:io';
-
-import 'package:path_provider/path_provider.dart';
 import 'package:rvs/vulnerability_data.dart';
 
 import './global_data.dart';
@@ -25,18 +22,6 @@ class _SurveyScreenState extends State<SurveyScreen> {
   List<String> tabTitles = [];
 
   List<Tab> tabs = [];
-
-  Future<void> clearViewsDirectory() async {
-    Directory viewsDir = await getApplicationDocumentsDirectory();
-    viewsDir = Directory("${viewsDir.path}/Views");
-    if (!(await viewsDir.exists())) {
-      return;
-    }
-    List<FileSystemEntity> files = viewsDir.listSync();
-    for (FileSystemEntity file in files) {
-      file.deleteSync();
-    }
-  }
 
   @override
   void initState() {
@@ -64,8 +49,6 @@ class _SurveyScreenState extends State<SurveyScreen> {
         text: tabTitles[index],
       );
     });
-
-    clearViewsDirectory();
 
     int surveyNumber = GetIt.I<GlobalData>().surveyNumber;
     List<VulnElement> lifeFormVulnElements = getFormVulnElements(possibleLifeThreatening, surveyNumber);

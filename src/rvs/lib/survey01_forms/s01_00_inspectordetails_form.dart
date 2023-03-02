@@ -15,7 +15,7 @@ class _S01InspectorDetailsFormState extends State<S01InspectorDetailsForm> with 
   @override
   bool get wantKeepAlive => true;
 
-  static const BorderRadius borderRadiusCached = BorderRadius.all(Radius.circular(20.0));
+  // static const BorderRadius borderRadiusCached = BorderRadius.all(Radius.circular(20.0));
 
   TextEditingController inspIDCtl = TextEditingController();
   TextEditingController dateCtl = TextEditingController();

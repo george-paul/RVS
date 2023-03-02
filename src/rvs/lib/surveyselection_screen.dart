@@ -5,12 +5,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get_it/get_it.dart';
-import 'util.dart';
 
 class SurveyCard extends StatelessWidget {
-  int surveyNumber;
+  final int surveyNumber;
 
-  SurveyCard({Key? key, required this.surveyNumber}) : super(key: key);
+  const SurveyCard({Key? key, required this.surveyNumber}) : super(key: key);
 
   static const BorderRadius borderRadius = BorderRadius.all(Radius.circular(20.0));
 
@@ -93,7 +92,7 @@ class SurveySelectionScreen extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         child: Column(
-          children: [
+          children: const [
             SurveyCard(
               surveyNumber: 0,
             ),

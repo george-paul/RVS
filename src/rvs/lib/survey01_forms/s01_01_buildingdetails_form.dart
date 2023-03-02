@@ -1,8 +1,5 @@
-import 'dart:io';
-
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:rvs/survey01_forms/survey01_data.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -69,7 +66,7 @@ class _S01BuildingDescriptionFormState extends State<S01BuildingDescriptionForm>
               ),
               controller: addressLine1Ctl,
             ),
-            SizedBox(height: 22.0),
+            const SizedBox(height: 22.0),
             Text(
               "Address Line 2",
               style: Theme.of(context).textTheme.headline6,
@@ -85,7 +82,7 @@ class _S01BuildingDescriptionFormState extends State<S01BuildingDescriptionForm>
               ),
               controller: addressLine2Ctl,
             ),
-            SizedBox(height: 22.0),
+            const SizedBox(height: 22.0),
             Text(
               "City/Town",
               style: Theme.of(context).textTheme.headline6,
@@ -113,39 +110,19 @@ class _S01BuildingDescriptionFormState extends State<S01BuildingDescriptionForm>
 
   // call with index == -1 to take an extra picture
   void takeStructureViewPicture(int index) async {
-    if (index == -1) {
-      index = extraPictureNumber + 3 + 1;
-    }
     final XFile? xImg = await ImagePicker().pickImage(source: ImageSource.camera);
     if (xImg == null) {
       Fluttertoast.showToast(msg: "Could not take image");
       return;
     }
-    // Directory saveDir = await Directory('/storage/emulated/0/Download/RVSreports').create();
-    Directory saveDir = await getApplicationDocumentsDirectory();
-    saveDir = await Directory("${saveDir.path}/Views").create();
 
-    // get a label
-    String fileLabel = "";
-    switch (index) {
-      case 0:
-        fileLabel = "Front";
-        break;
-      case 1:
-        fileLabel = "Left";
-        break;
-      case 2:
-        fileLabel = "Right";
-        break;
-      case 3:
-        fileLabel = "Back";
-        break;
-      default:
-        fileLabel = index.toString();
+    // for non FLRB pictures
+    if (index == -1) {
+      GetIt.I<Survey01Data>().pictures.add(null);
+      index = extraPictureNumber + 4;
     }
 
-    File file = await File("${saveDir.path}/StructureView$fileLabel.png").create();
-    await file.writeAsBytes(await xImg.readAsBytes());
+    GetIt.I<Survey01Data>().pictures[index] = xImg;
 
     if (index <= 3) {
       GetIt.I<Survey01Data>().picturesTaken[index] = true;
@@ -159,7 +136,6 @@ class _S01BuildingDescriptionFormState extends State<S01BuildingDescriptionForm>
         extraPictureNumber++;
       });
     }
-    // List<FileSystemEntity> files = saveDir.listSync();
   }
 
   Widget cameraButtonIcon({required bool isTicked}) {

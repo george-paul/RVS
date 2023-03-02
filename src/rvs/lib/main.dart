@@ -45,7 +45,7 @@ class MyApp extends StatelessWidget {
     );
 
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'RVS',
       darkTheme: darkTheme,
       theme: lightTheme,
       home: const SplashScreen(),

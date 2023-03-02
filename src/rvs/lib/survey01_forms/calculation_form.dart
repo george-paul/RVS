@@ -8,10 +8,10 @@ class CalculationForm extends StatefulWidget {
   const CalculationForm({Key? key}) : super(key: key);
 
   @override
-  _CalculationFormState createState() => _CalculationFormState();
+  CalculationFormState createState() => CalculationFormState();
 }
 
-class _CalculationFormState extends State<CalculationForm> with AutomaticKeepAliveClientMixin {
+class CalculationFormState extends State<CalculationForm> with AutomaticKeepAliveClientMixin {
   static const BorderRadius borderRadiusCached = BorderRadius.all(Radius.circular(20.0));
 
   bool calcDone = false;
@@ -123,7 +123,6 @@ class _CalculationFormState extends State<CalculationForm> with AutomaticKeepAli
         ),
       ),
     );
-    ;
   }
 
   @override
@@ -135,18 +134,18 @@ class _CalculationFormState extends State<CalculationForm> with AutomaticKeepAli
         child: Column(
           children: [
             const SizedBox(height: 40),
-            Text(
+            const Text(
               "Click the button below to calculate the color rating for this structure.",
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             ElevatedButton(
               onPressed: () {
                 doRatingCalculation();
               },
               child: Visibility(
                 visible: isLoading,
-                replacement: Text("Calculate"),
+                replacement: const Text("Calculate"),
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(18, 0, 18, 0),
                   child: SizedBox(
