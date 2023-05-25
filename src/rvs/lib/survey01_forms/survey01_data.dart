@@ -1,7 +1,7 @@
-import 'dart:io';
+import "../save_results/save_results_base.dart"
+    if (dart.library.html) "../save_results/save_results_web.dart"
+    if (dart.library.io) "../save_results/save_results_android.dart";
 
-import 'package:archive/archive.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:rvs/global_data.dart';
@@ -12,8 +12,6 @@ import 'package:get_it/get_it.dart';
 
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
-
-import '../vulnerability_data.dart';
 
 final List<List<Pair<bool, String>>> structSysOptions = [
   [
@@ -295,9 +293,9 @@ class Survey01Data {
     List<vuln.VulnElement> lifeElements = vuln.getFormVulnElements(vuln.possibleLifeThreatening, surveyNumber);
     List<List<String>> tempRows = [[], [], []];
     for (int i = 0; i < lifeElements.length; i++) {
-      VulnElement ele = lifeElements[i];
-      if (ele.runtimeType == VulnQuestion) {
-        ele = ele as VulnQuestion;
+      vuln.VulnElement ele = lifeElements[i];
+      if (ele.runtimeType == vuln.VulnQuestion) {
+        ele = ele as vuln.VulnQuestion;
         if (lifeCheckboxes[i]) {
           tempRows[ele.color.index].add(ele.text);
         }
@@ -306,9 +304,9 @@ class Survey01Data {
 
     List<vuln.VulnElement> ecoElements = vuln.getFormVulnElements(vuln.possibleEconomicLoss, surveyNumber);
     for (int i = 0; i < ecoElements.length; i++) {
-      VulnElement ele = ecoElements[i];
-      if (ele.runtimeType == VulnQuestion) {
-        ele = ele as VulnQuestion;
+      vuln.VulnElement ele = ecoElements[i];
+      if (ele.runtimeType == vuln.VulnQuestion) {
+        ele = ele as vuln.VulnQuestion;
         if (ecoCheckboxes[i]) {
           tempRows[ele.color.index].add(ele.text);
         }
@@ -504,88 +502,8 @@ class Survey01Data {
       ),
     );
 
-    if (kIsWeb) {
-      saveResultsWeb(pdf);
-    } else if (Platform.isAndroid) {
-      saveResultsAndroid(pdf);
-    }
-  }
-
-  void saveResultsAndroid(pdf) async {
-    //
-    //----------------------------- Save PDF -----------------------------
-    //
     String timeString = "$inspDate$inspTime".replaceAll(RegExp(r"\D"), "");
-
-    Directory saveDir = await Directory("/storage/emulated/0/Download/RVSreports").create();
-    File file = await File("${saveDir.path}/${timeString}_RVSReport.pdf").create();
-    await file.writeAsBytes(await pdf.save());
-
-    //
-    //----------------------------- Save Images -----------------------------
-    //
-    for (int index = 0; index < pictures.length; index++) {
-      XFile xImg = pictures[index]!;
-      String fileLabel = "";
-      switch (index) {
-        case 0:
-          fileLabel = "Front";
-          break;
-        case 1:
-          fileLabel = "Left";
-          break;
-        case 2:
-          fileLabel = "Right";
-          break;
-        case 3:
-          fileLabel = "Back";
-          break;
-        default:
-          fileLabel = "Extra${index - 3}";
-      }
-      File file = await File("${saveDir.path}/${timeString}_StructureView$fileLabel.png").create();
-      await file.writeAsBytes(await xImg.readAsBytes());
-    }
-  }
-
-  void saveResultsWeb(pw.Document pdf) async {
-    Archive archive = Archive();
-
-    //
-    //----------------------------- Save PDF -----------------------------
-    //
-    String timeString = "$inspDate$inspTime".replaceAll(RegExp(r"\D"), "");
-    Uint8List pdfBytes = await pdf.save();
-    archive.addFile(ArchiveFile("${timeString}_RVSReport.pdf", pdfBytes.length, pdfBytes));
-
-    //
-    //----------------------------- Save Images -----------------------------
-    //
-    for (int index = 0; index < pictures.length; index++) {
-      XFile xImg = pictures[index]!;
-      String fileLabel = "";
-      switch (index) {
-        case 0:
-          fileLabel = "Front";
-          break;
-        case 1:
-          fileLabel = "Left";
-          break;
-        case 2:
-          fileLabel = "Right";
-          break;
-        case 3:
-          fileLabel = "Back";
-          break;
-        default:
-          fileLabel = "Extra${index - 3}";
-      }
-      Uint8List xImgBytes = await xImg.readAsBytes();
-      archive.addFile(ArchiveFile("${timeString}_StructureView$fileLabel.png", xImgBytes.length, xImgBytes));
-    }
-
-    Uint8List archiveBytes = Uint8List.fromList(ZipEncoder().encode(archive)!);
-    triggerDownload(bytes: archiveBytes, downloadName: "${timeString}_RVSReport.zip");
+    SaveResults().save(pdf, timeString, pictures);
     Fluttertoast.showToast(msg: "Generated results");
   }
 
