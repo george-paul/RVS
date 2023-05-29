@@ -28,7 +28,7 @@ class _SplashScreenState extends State<SplashScreen> {
       body: SizedBox.expand(
         child: GestureDetector(
           onTap: () {
-            Navigator.pushReplacementNamed(context, (auth.currentUser == null) ? "/login_screen" : "/survey_selection");
+            Navigator.pushReplacementNamed(context, (auth.currentUser == null) ? "/login" : "/survey_selection");
           },
           child: Container(
             color: Colors.blueGrey.shade200,
@@ -60,7 +60,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 ),
                 const Spacer(flex: 2),
                 Text(
-                  "RVS",
+                  "PESA",
                   style: Theme.of(context).textTheme.displayMedium?.copyWith(
                         fontFamily: "Arvo",
                         color: Colors.white,

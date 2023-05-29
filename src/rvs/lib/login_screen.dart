@@ -301,7 +301,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Column(
                   children: [
                     Text(
-                      "Welcome to RVS",
+                      "Welcome to PESA",
                       style: Theme.of(context).textTheme.displayMedium?.copyWith(
                             fontFamily: "Arvo",
                             color: Colors.white,

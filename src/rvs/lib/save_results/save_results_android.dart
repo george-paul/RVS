@@ -10,8 +10,8 @@ class SaveResults extends AbstractSaveResults {
     //
     //----------------------------- Save PDF -----------------------------
     //
-    Directory saveDir = await Directory("/storage/emulated/0/Download/RVSreports").create();
-    File file = await File("${saveDir.path}/${timeString}_RVSReport.pdf").create();
+    Directory saveDir = await Directory("/storage/emulated/0/Download/PESAreports").create();
+    File file = await File("${saveDir.path}/${timeString}_PESAReport.pdf").create();
     await file.writeAsBytes(await pdf.save());
 
     //

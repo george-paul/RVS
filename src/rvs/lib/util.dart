@@ -35,6 +35,45 @@ class Pair<T1, T2> {
   T2 b;
 
   Pair(this.a, this.b);
+
+  static List<TA> getUnzippedListOfA<TA, TB>(List<Pair<TA, TB>> list) {
+    List<TA> result = [];
+    for (int i = 0; i < list.length; i++) {
+      result.add(list[i].a);
+    }
+    return result;
+  }
+
+  static List<TB> getUnzippedListOfB<TA, TB>(List<Pair<TA, TB>> list) {
+    List<TB> result = [];
+    for (int i = 0; i < list.length; i++) {
+      result.add(list[i].b);
+    }
+    return result;
+  }
+}
+
+String checkboxString(List<bool> checkboxes, List<Pair<bool, String>> optionList, {String? others}) {
+  List<String> names = Pair.getUnzippedListOfB(optionList);
+  List<String> result = [];
+  for (int i = 0; i < checkboxes.length; i++) {
+    if (checkboxes[i] == true) {
+      result.add(names[i]);
+    }
+  }
+  if (others != null && others.isNotEmpty) {
+    result.add(others);
+  }
+
+  return prettyListString(result);
+}
+
+String prettyListString<T>(List<T> list) {
+  String returnString = list.toString().substring(1, list.toString().length - 1);
+  if (returnString.trim() == "") {
+    return "None";
+  }
+  return returnString;
 }
 
 // custom Widget to round corners of an expansion tile
@@ -56,3 +95,19 @@ class ExpansionTileCard extends StatelessWidget {
     );
   }
 }
+
+String getStringFromList(List<dynamic> list) {
+  if (list.isEmpty) {
+    return "None";
+  }
+
+  String result = "";
+  for (int i = 0; i < list.length; i++) {
+    result += "${list[i]}, ";
+  }
+
+  result = result.substring(0, result.length - 2);
+  return result;
+}
+
+const BorderRadius cardBorderRadius = BorderRadius.all(Radius.circular(20.0));

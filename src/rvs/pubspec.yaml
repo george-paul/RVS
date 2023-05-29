@@ -48,6 +48,7 @@ dependencies:
   archive: ^3.3.6
   geolocator: ^9.0.2
   http: ^0.13.5
+  country_picker: ^2.0.19
   
 
 dev_dependencies:

@@ -1,16 +1,14 @@
-import 'package:rvs/vulnerability_data.dart';
+import 'package:rvs/vulnerability_element.dart';
 
 import './global_data.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
-import 'survey01_forms/survey01_data.dart';
-import 'survey01_forms/survey01_export.dart';
+import 'survey_forms/survey_data.dart';
+import 'survey_forms/survey_export.dart';
 
 class SurveyScreen extends StatefulWidget {
-  final int surveyNumber;
-
-  const SurveyScreen({Key? key, required this.surveyNumber}) : super(key: key);
+  const SurveyScreen({Key? key}) : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
@@ -22,25 +20,28 @@ class _SurveyScreenState extends State<SurveyScreen> {
   List<String> tabTitles = [];
 
   List<Tab> tabs = [];
+  int surveyNumber = 0;
 
   @override
   void initState() {
     tabViews = [
-      const S01InspectorDetailsForm(),
-      const S01BuildingDescriptionForm(),
-      const S01StructSysForm(),
-      const S01VulnerabilityForm(),
-      const CalculationForm(),
-      const FurtherActionsForm(),
-      const S01SubmitForm(),
+      const InspectorDetailsForm(),
+      const BuildingDescriptionForm(),
+      const StructSysForm(),
+      const StructComponentsForm(),
+      const OccupancyForm(),
+      const VulnerabilityForm(),
+      const SuggestionForm(),
+      const SubmitForm(),
     ];
     tabTitles = [
       "Inspector Details",
       "Building Description",
-      "Structural System and Components",
+      "Structural System",
+      "Structural Components",
+      "Occupancy",
       "Vulnerability",
-      "Calculation",
-      "Further Actions",
+      "Suggestions",
       "Submit",
     ];
 
@@ -50,17 +51,16 @@ class _SurveyScreenState extends State<SurveyScreen> {
       );
     });
 
-    int surveyNumber = GetIt.I<GlobalData>().surveyNumber;
-    List<VulnElement> lifeFormVulnElements = getFormVulnElements(possibleLifeThreatening, surveyNumber);
-    GetIt.I<Survey01Data>().lifeCheckboxes.addAll(List.filled(lifeFormVulnElements.length, false));
-    List<VulnElement> ecoFormVulnElements = getFormVulnElements(possibleEconomicLoss, surveyNumber);
-    GetIt.I<Survey01Data>().ecoCheckboxes.addAll(List.filled(ecoFormVulnElements.length, false));
+    surveyNumber = GetIt.I<GlobalData>().surveyNumber;
+    List<VulnElement> vulnElements = getFormVulnElements(possibleElements, surveyNumber);
+    GetIt.I<SurveyData>().vulnCheckboxes.addAll(List.filled(vulnElements.length, false));
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
+      // this widget is so that the user can't close camera with back button
       onWillPop: () async {
         if (GetIt.I<GlobalData>().cameraOpen) {
           return false;
@@ -80,7 +80,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
           // build
           return Scaffold(
             appBar: AppBar(
-              title: Text("RVS - ${surveyTitles[widget.surveyNumber]}"),
+              title: Text("PESA - ${surveyTitles[surveyNumber]}"),
               bottom: TabBar(
                 isScrollable: true,
                 tabs: tabs,

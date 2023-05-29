@@ -1,4 +1,6 @@
-import "../save_results/save_results_base.dart"
+import 'package:flutter/foundation.dart';
+
+import '../save_results/save_results_base.dart'
     if (dart.library.html) "../save_results/save_results_web.dart"
     if (dart.library.io) "../save_results/save_results_android.dart";
 
@@ -6,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:rvs/global_data.dart';
 import 'package:rvs/util.dart';
-import 'package:rvs/vulnerability_data.dart' as vuln;
+import 'package:rvs/vulnerability_element.dart' as vuln;
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get_it/get_it.dart';
 
@@ -15,65 +17,67 @@ import 'package:pdf/widgets.dart' as pw;
 
 final List<List<Pair<bool, String>>> structSysOptions = [
   [
-    Pair(false, "Moment Frame"),
-    Pair(false, "Moment Frame with Braces"),
-    Pair(false, "Moment Frame with Structural Walls"),
-  ],
-  [
-    Pair(false, "Load Bearing Masonry Structure"),
-  ],
-  [
-    Pair(false, "Burnt Clay Bricks"),
-    Pair(false, "Cement Blocks"),
-    Pair(false, "Stone Blocks"),
-  ],
-  [
     Pair(false, "Igneous Rocks"),
     Pair(false, "Sedimentary Rocks"),
     Pair(false, "Slate Blocks"),
   ],
   [
-    Pair(false, "Timber frame without diagonal braces"),
-    Pair(false, "Timber frame with diagonal braces"),
+    Pair(false, "Moment Frame"),
+    Pair(false, "Moment Frame with Structural Walls"),
+    Pair(false, "Moment Frame with Braces"),
   ],
-  [
-    Pair(false, "Unstrengthened mud courses"),
-    Pair(false, "Slurry of wet mud"),
-    Pair(false, "Locally available grass"),
-  ],
-  [
-    Pair(false, "Load Bearing Masonry Structure"),
-  ],
+  // [
+  //   Pair(false, "Burnt Clay Bricks"),
+  //   Pair(false, "Cement Blocks"),
+  //   Pair(false, "Stone Blocks"),
+  // ],
+  // [
+  //   Pair(false, "Igneous Rocks"),
+  //   Pair(false, "Sedimentary Rocks"),
+  //   Pair(false, "Slate Blocks"),
+  // ],
+  // [
+  //   Pair(false, "Timber frame without diagonal braces"),
+  //   Pair(false, "Timber frame with diagonal braces"),
+  // ],
+  // [
+  //   Pair(false, "Unstrengthened mud courses"),
+  //   Pair(false, "Slurry of wet mud"),
+  //   Pair(false, "Locally available grass"),
+  // ],
+  // [
+  //   Pair(false, "Load Bearing Masonry Structure"),
+  // ],
 ];
 
 final List<List<Pair<bool, String>>> floorOptions = [
+  [
+    Pair(false, "RC Slab"),
+    Pair(false, "Timber planks & beams"),
+  ],
   [
     Pair(false, "In-Situ"),
     Pair(false, "Precast Planks with in-situ screed"),
     Pair(false, "Precast"),
   ],
-  [
-    Pair(false, "RC Slab"),
-    Pair(false, "Precast Planks with in-situ screed"),
-  ],
-  [
-    Pair(false, "RC Slab"),
-  ],
-  [
-    Pair(false, "RC Slab"),
-    Pair(false, "Timber planks on timber beams"),
-  ],
-  [
-    Pair(false, "Timber beams with wooden planks"),
-    Pair(false, "Timber frame with stone planks"),
-  ],
-  [
-    Pair(false, "Mud Plastered"),
-  ],
-  [
-    Pair(false, "RC Slab"),
-    Pair(false, "Precast Planks with in-situ screed"),
-  ],
+  // [
+  //   Pair(false, "RC Slab"),
+  // ],
+  // [
+  //   Pair(false, "RC Slab"),
+  //   Pair(false, "Timber planks on timber beams"),
+  // ],
+  // [
+  //   Pair(false, "Timber beams with wooden planks"),
+  //   Pair(false, "Timber frame with stone planks"),
+  // ],
+  // [
+  //   Pair(false, "Mud Plastered"),
+  // ],
+  // [
+  //   Pair(false, "RC Slab"),
+  //   Pair(false, "Precast Planks with in-situ screed"),
+  // ],
 ];
 
 final List<List<Pair<bool, String>>> roofGeoOptions = [
@@ -81,90 +85,88 @@ final List<List<Pair<bool, String>>> roofGeoOptions = [
     Pair(false, "Flat"),
     Pair(false, "Pitched"),
     Pair(false, "Hipped"),
-    Pair(false, "Split"),
   ],
   [
     Pair(false, "Flat"),
-    Pair(false, "Pitched"),
     Pair(false, "Hipped"),
-    Pair(false, "Split"),
-  ],
-  [
-    Pair(false, "Flat"),
     Pair(false, "Pitched"),
-    Pair(false, "Hipped"),
-    Pair(false, "Split"),
   ],
-  [
-    Pair(false, "Flat"),
-    Pair(false, "Pitched"),
-    Pair(false, "Hipped"),
-    Pair(false, "Split"),
-  ],
-  [
-    Pair(false, "Flat"),
-    Pair(false, "Pitched"),
-    Pair(false, "Hipped"),
-    Pair(false, "Split"),
-  ],
-  [
-    Pair(false, "Pitched"),
-    Pair(false, "Hipped"),
-  ],
-  [
-    Pair(false, "Flat"),
-    Pair(false, "Pitched"),
-    Pair(false, "Hipped"),
-    Pair(false, "Split"),
-  ],
+  // [
+  //   Pair(false, "Flat"),
+  //   Pair(false, "Pitched"),
+  //   Pair(false, "Hipped"),
+  //   Pair(false, "Split"),
+  // ],
+  // [
+  //   Pair(false, "Flat"),
+  //   Pair(false, "Pitched"),
+  //   Pair(false, "Hipped"),
+  //   Pair(false, "Split"),
+  // ],
+  // [
+  //   Pair(false, "Flat"),
+  //   Pair(false, "Pitched"),
+  //   Pair(false, "Hipped"),
+  //   Pair(false, "Split"),
+  // ],
+  // [
+  //   Pair(false, "Pitched"),
+  //   Pair(false, "Hipped"),
+  // ],
+  // [
+  //   Pair(false, "Flat"),
+  //   Pair(false, "Pitched"),
+  //   Pair(false, "Hipped"),
+  //   Pair(false, "Split"),
+  // ],
 ];
 
 final List<List<Pair<bool, String>>> roofMatOptions = [
+  [
+    Pair(false, "RC Slab"),
+    Pair(false, "Wooden Truss with Clay Tiles"),
+    Pair(false, "Corrugated Sheets"),
+    Pair(false, "Wood Planks"),
+    Pair(false, "Steel Truss with Clay Tiles"),
+  ],
   [],
-  [
-    Pair(false, "RC Slab"),
-    Pair(false, "Wood with Clay Tiles"),
-    Pair(false, "Wood Truss with Corrugated Sheets"),
-    Pair(false, "Wood with Wooden Planks"),
-  ],
-  [
-    Pair(false, "RC Slab"),
-    Pair(false, "Wood with Clay Tiles"),
-    Pair(false, "Wood Truss with Corrugated Sheets"),
-    Pair(false, "Wood with Wooden Planks"),
-  ],
-  [
-    Pair(false, "RC Slab"),
-    Pair(false, "Wood with Clay Tiles"),
-    Pair(false, "Wood Truss with Corrugated Sheets"),
-    Pair(false, "Wood with Wooden Planks"),
-  ],
-  [
-    Pair(false, "Timber truss with Timber planks"),
-    Pair(false, "Timber truss with corrugated GI sheets"),
-  ],
-  [
-    Pair(false, "Thatch + Bamboo"),
-    Pair(false, "Wood truss with clay tiles"),
-    Pair(false, "Wood truss with corrugated sheets"),
-    Pair(false, "Wood truss with wooden planks"),
-  ],
-  [
-    Pair(false, "RC Slab"),
-    Pair(false, "Wood with Clay Tiles"),
-    Pair(false, "Wood Truss with Corrugated Sheets"),
-    Pair(false, "Wood with Wooden Planks"),
-  ],
+  // [
+  //   Pair(false, "RC Slab"),
+  //   Pair(false, "Wood with Clay Tiles"),
+  //   Pair(false, "Wood Truss with Corrugated Sheets"),
+  //   Pair(false, "Wood with Wooden Planks"),
+  // ],
+  // [
+  //   Pair(false, "RC Slab"),
+  //   Pair(false, "Wood with Clay Tiles"),
+  //   Pair(false, "Wood Truss with Corrugated Sheets"),
+  //   Pair(false, "Wood with Wooden Planks"),
+  // ],
+  // [
+  //   Pair(false, "Timber truss with Timber planks"),
+  //   Pair(false, "Timber truss with corrugated GI sheets"),
+  // ],
+  // [
+  //   Pair(false, "Thatch + Bamboo"),
+  //   Pair(false, "Wood truss with clay tiles"),
+  //   Pair(false, "Wood truss with corrugated sheets"),
+  //   Pair(false, "Wood truss with wooden planks"),
+  // ],
+  // [
+  //   Pair(false, "RC Slab"),
+  //   Pair(false, "Wood with Clay Tiles"),
+  //   Pair(false, "Wood Truss with Corrugated Sheets"),
+  //   Pair(false, "Wood with Wooden Planks"),
+  // ],
 ];
 
 final List<List<Pair<bool, String>>> mortarOptions = [
-  [],
   [
     Pair(false, "Cement"),
     Pair(false, "Mud"),
     Pair(false, "Lime"),
-    Pair(false, "No Mortar"),
   ],
+  [],
   [
     Pair(false, "Cement"),
     Pair(false, "Mud"),
@@ -187,9 +189,11 @@ final List<List<Pair<bool, String>>> mortarOptions = [
   ],
 ];
 
-class Survey01Data {
+class SurveyData {
   // form 00
-  String? inspID;
+  String? inspID1;
+  String? inspID2;
+  String? inspID3;
   String? inspDate;
   String? inspTime;
   String? coords;
@@ -199,36 +203,98 @@ class Survey01Data {
   String? addressLine1;
   String? addressLine2;
   String? addressCityTown;
+  String? addressCountry = "India";
   List<bool> picturesTaken = [false, false, false, false];
   int extraPicturesNumber = 0;
   List<XFile?> pictures = [null, null, null, null];
-  int? occupancy;
-  String? occupancyString;
-  int? subOccupancy;
-  String? subOccupancyString; // Can stay null
 
-  // form 02
+  // struct sys
   String? structSys;
+
+  // struct details
   String? floor;
   String? roofGeo;
   String? roofMat; // Can stay null
   String? mortar; // Can stay null
+
+  // occupancy
+  int? occupancy;
+  String? occupancyString;
+  int? subOccupancy;
+  String? subOccupancyString; // Can stay null
+  String? otherOccupancyString;
 
   // calculation form
   bool calcDone = false;
   String suggestedInterventions = "";
 
   // form 04
-  List<bool> lifeCheckboxes = [];
-  List<bool> ecoCheckboxes = [];
+  List<bool> vulnCheckboxes = [];
+  int suggScansPicturesNumber = 0;
+  List<XFile?> suggScansPictures = [];
   bool buildingToBeQuarantined = false;
   bool detailedScreening = false;
 
-  void calcRVS() async {
-    GetIt.I<Survey01Data>().calcDone = false;
+  //
+  //----------------------------- Helper Functions -----------------------------
+  //
+
+  String getInspIDString() {
+    String result = "$inspID1";
+    if (inspID2 != null && inspID2 != "") {
+      result += ", $inspID2";
+    }
+    if (inspID3 != null && inspID3 != "") {
+      result += ", $inspID3";
+    }
+    return result;
+  }
+
+  pw.Align pdfSubheading(String text, context) {
+    return pw.Align(
+      alignment: pw.Alignment.centerLeft,
+      child: pw.Text(
+        text,
+        textAlign: pw.TextAlign.left,
+        style: pw.Theme.of(context).header2,
+      ),
+    );
+  }
+
+  Future<List<pw.Widget>> pdfSuggScans() async {
+    List<pw.MemoryImage> suggScans = [];
+    for (int i = 0; i < suggScansPicturesNumber; i++) {
+      Uint8List data = await suggScansPictures[i]!.readAsBytes();
+      suggScans.add(pw.MemoryImage(data));
+    }
+
+    // half of the a4 width and some extra
+    double maxWidth = (PdfPageFormat.a4.availableWidth / 1.5) - (PdfPageFormat.a4.availableWidth / 10);
+
+    List<pw.Widget> imageWidgetList = [];
+    for (var img in suggScans) {
+      imageWidgetList.add(
+        pw.Container(
+          width: maxWidth,
+          child: pw.Padding(
+            padding: const pw.EdgeInsets.all(10),
+            child: pw.Image(img),
+          ),
+        ),
+      );
+    }
+    return imageWidgetList;
+  }
+
+  //
+  //----------------------------- Calculation and Validation -----------------------------
+  //
+
+  void calcPESA() async {
+    GetIt.I<SurveyData>().calcDone = false;
     final int surveyNumber = GetIt.I<GlobalData>().surveyNumber;
 
-    if (inspID == null) {
+    if (inspID1 == null) {
       Fluttertoast.showToast(msg: "Invalid Inspector ID");
       return;
     }
@@ -283,31 +349,25 @@ class Survey01Data {
       return;
     }
 
-    if (subOccupancyString != null) {
-      if (!subOccupancyString!.contains("-")) subOccupancyString = " - $subOccupancyString";
+    if (otherOccupancyString != null) {
+      occupancyString = otherOccupancyString;
+    } else if (subOccupancyString != null) {
+      if (!subOccupancyString!.contains("-") && subOccupancyString != "None") {
+        subOccupancyString = " - $subOccupancyString";
+        occupancyString = occupancyString! + subOccupancyString!;
+      }
     } else {
       subOccupancyString = "";
     }
 
     // assemble factors temp rows
-    List<vuln.VulnElement> lifeElements = vuln.getFormVulnElements(vuln.possibleLifeThreatening, surveyNumber);
+    List<vuln.VulnElement> vulnElemets = vuln.getFormVulnElements(vuln.possibleElements, surveyNumber);
     List<List<String>> tempRows = [[], [], []];
-    for (int i = 0; i < lifeElements.length; i++) {
-      vuln.VulnElement ele = lifeElements[i];
+    for (int i = 0; i < vulnElemets.length; i++) {
+      vuln.VulnElement ele = vulnElemets[i];
       if (ele.runtimeType == vuln.VulnQuestion) {
         ele = ele as vuln.VulnQuestion;
-        if (lifeCheckboxes[i]) {
-          tempRows[ele.color.index].add(ele.text);
-        }
-      }
-    }
-
-    List<vuln.VulnElement> ecoElements = vuln.getFormVulnElements(vuln.possibleEconomicLoss, surveyNumber);
-    for (int i = 0; i < ecoElements.length; i++) {
-      vuln.VulnElement ele = ecoElements[i];
-      if (ele.runtimeType == vuln.VulnQuestion) {
-        ele = ele as vuln.VulnQuestion;
-        if (ecoCheckboxes[i]) {
+        if (vulnCheckboxes[i]) {
           tempRows[ele.color.index].add(ele.text);
         }
       }
@@ -352,6 +412,9 @@ class Survey01Data {
     //
     //----------------------------- create PDF -----------------------------
     //
+
+    List<pw.Widget> suggScanPdfImages = await pdfSuggScans();
+
     final pageTheme = pw.PageTheme(
       buildBackground: ((context) {
         return pw.Watermark.text(
@@ -392,14 +455,14 @@ class Survey01Data {
                 pw.Align(
                   alignment: pw.Alignment.center,
                   child: pw.Text(
-                    "RVS REPORT",
+                    "PESA REPORT",
                     style: pw.Theme.of(context).header1,
                   ),
                 ),
                 pw.Align(
                   alignment: pw.Alignment.center,
                   child: pw.Text(
-                    "Generated at $inspTime on $inspDate by $inspID",
+                    "Generated at $inspTime on $inspDate by ${getInspIDString()}",
                     textAlign: pw.TextAlign.center,
                     style: pw.Theme.of(context).header5,
                   ),
@@ -412,8 +475,11 @@ class Survey01Data {
                   data: [
                     ["Building Type", surveyTitles[surveyNumber]],
                     ["Building GPS Coordinates", coords],
-                    ["Building Address", "$buildingName, \n$addressLine1, \n$addressLine2, \n$addressCityTown"],
-                    ["Occupancy Type", "$occupancyString$subOccupancyString"],
+                    [
+                      "Building Address",
+                      "$buildingName, \n$addressLine1, \n$addressLine2, \n$addressCityTown, $addressCountry"
+                    ],
+                    ["Occupancy Type", "$occupancyString"],
                   ],
                 ),
                 pw.SizedBox(height: 30),
@@ -495,6 +561,8 @@ class Survey01Data {
                   (suggestedInterventions == "") ? "None" : suggestedInterventions,
                   textAlign: pw.TextAlign.left,
                 ),
+                pw.SizedBox(height: 20),
+                ...suggScanPdfImages,
               ],
             ),
           ];
@@ -504,17 +572,6 @@ class Survey01Data {
 
     String timeString = "$inspDate$inspTime".replaceAll(RegExp(r"\D"), "");
     SaveResults().save(pdf, timeString, pictures);
-    Fluttertoast.showToast(msg: "Generated results");
-  }
-
-  pw.Align pdfSubheading(String text, context) {
-    return pw.Align(
-      alignment: pw.Alignment.centerLeft,
-      child: pw.Text(
-        text,
-        textAlign: pw.TextAlign.left,
-        style: pw.Theme.of(context).header2,
-      ),
-    );
+    Fluttertoast.showToast(msg: "Generated results at Downloads");
   }
 }

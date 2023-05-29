@@ -29,7 +29,7 @@ class SaveResults extends AbstractSaveResults {
     //----------------------------- Save PDF -----------------------------
     //
     Uint8List pdfBytes = await pdf.save();
-    archive.addFile(ArchiveFile("${timeString}_RVSReport.pdf", pdfBytes.length, pdfBytes));
+    archive.addFile(ArchiveFile("${timeString}_PESAReport.pdf", pdfBytes.length, pdfBytes));
 
     //
     //----------------------------- Save Images -----------------------------
@@ -58,6 +58,6 @@ class SaveResults extends AbstractSaveResults {
     }
 
     Uint8List archiveBytes = Uint8List.fromList(ZipEncoder().encode(archive)!);
-    triggerDownload(bytes: archiveBytes, downloadName: "${timeString}_RVSReport.zip");
+    triggerDownload(bytes: archiveBytes, downloadName: "${timeString}_PESAReport.zip");
   }
 }

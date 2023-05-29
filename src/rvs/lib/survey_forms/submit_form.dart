@@ -1,33 +1,23 @@
 // ignore_for_file: prefer_const_constructors
 
-import 'package:rvs/survey01_forms/survey01_data.dart';
+import 'package:rvs/survey_forms/survey_data.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
 import '../util.dart';
 
-class S01SubmitForm extends StatefulWidget {
-  const S01SubmitForm({Key? key}) : super(key: key);
+class SubmitForm extends StatefulWidget {
+  const SubmitForm({Key? key}) : super(key: key);
 
   @override
-  State<S01SubmitForm> createState() => _S01SubmitFormState();
+  State<SubmitForm> createState() => _SubmitFormState();
 }
 
-class _S01SubmitFormState extends State<S01SubmitForm> {
-  bool calcDone = false;
+class _SubmitFormState extends State<SubmitForm> {
   bool isLoading = false;
 
-  @override
-  void initState() {
-    calcDone = GetIt.I<Survey01Data>().calcDone;
-    super.initState();
-  }
-
   void generatePDF() async {
-    setState(() {
-      calcDone = false;
-    }); // to refresh calcDone
-    GetIt.I<Survey01Data>().calcRVS();
+    GetIt.I<SurveyData>().calcPESA();
   }
 
   @override
@@ -39,16 +29,14 @@ class _S01SubmitFormState extends State<S01SubmitForm> {
           children: [
             Spacer(),
             Text(
-              (calcDone) ? "Generate your report with this button: " : "Run a rating calculation to generate a report.",
+              "Generate your report with this button: ",
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 10),
             ElevatedButton(
-              onPressed: (calcDone)
-                  ? () {
-                      generatePDF();
-                    }
-                  : null,
+              onPressed: () {
+                generatePDF();
+              },
               child: Visibility(
                 visible: isLoading,
                 replacement: Text("Generate"),

@@ -1,6 +1,6 @@
 import 'package:rvs/global_data.dart';
 
-import './survey01_forms/survey01_data.dart';
+import 'survey_forms/survey_data.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -15,10 +15,10 @@ class SurveyCard extends StatelessWidget {
 
   void getItSetup() {
     GetIt.I<GlobalData>().surveyNumber = surveyNumber;
-    if (GetIt.I.isRegistered<Survey01Data>()) {
-      GetIt.I.unregister<Survey01Data>();
+    if (GetIt.I.isRegistered<SurveyData>()) {
+      GetIt.I.unregister<SurveyData>();
     }
-    GetIt.I.registerSingleton<Survey01Data>(Survey01Data());
+    GetIt.I.registerSingleton<SurveyData>(SurveyData());
   }
 
   @override
@@ -30,7 +30,7 @@ class SurveyCard extends StatelessWidget {
       child: GestureDetector(
         onTap: () {
           getItSetup();
-          Navigator.pushNamed(context, "/survey", arguments: [surveyNumber]);
+          Navigator.pushNamed(context, "/survey");
         },
         child: Card(
           elevation: 0,
@@ -98,21 +98,6 @@ class SurveySelectionScreen extends StatelessWidget {
             ),
             SurveyCard(
               surveyNumber: 1,
-            ),
-            SurveyCard(
-              surveyNumber: 2,
-            ),
-            SurveyCard(
-              surveyNumber: 3,
-            ),
-            SurveyCard(
-              surveyNumber: 4,
-            ),
-            SurveyCard(
-              surveyNumber: 5,
-            ),
-            SurveyCard(
-              surveyNumber: 6,
             ),
           ],
         ),

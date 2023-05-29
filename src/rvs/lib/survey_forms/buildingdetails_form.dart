@@ -1,23 +1,110 @@
+import 'package:country_picker/country_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:rvs/survey01_forms/survey01_data.dart';
+import 'package:rvs/survey_forms/survey_data.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import '../util.dart';
+import 'dart:convert';
+import 'package:geolocator/geolocator.dart';
+import 'package:http/http.dart';
+import 'package:rvs/util.dart';
 
-class S01BuildingDescriptionForm extends StatefulWidget {
-  const S01BuildingDescriptionForm({Key? key}) : super(key: key);
+class BuildingDescriptionForm extends StatefulWidget {
+  const BuildingDescriptionForm({Key? key}) : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
-  _S01BuildingDescriptionFormState createState() => _S01BuildingDescriptionFormState();
+  _BuildingDescriptionFormState createState() => _BuildingDescriptionFormState();
 }
 
-class _S01BuildingDescriptionFormState extends State<S01BuildingDescriptionForm> with AutomaticKeepAliveClientMixin {
+class _BuildingDescriptionFormState extends State<BuildingDescriptionForm> with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
 
-  static const BorderRadius borderRadiusCached = BorderRadius.all(Radius.circular(20.0));
+  //
+  // -------------------------------------- Location --------------------------------------
+  //
+
+  TextEditingController coordsCtl = TextEditingController();
+  bool isLoadingLocation = false;
+
+  Future<String?> getLocation() async {
+    if (!kIsWeb) {
+      bool serviceEnabled;
+
+      serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        Fluttertoast.showToast(msg: "Please enable location services");
+        return null;
+      }
+      LocationPermission permission;
+      permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.unableToDetermine) {
+        Fluttertoast.showToast(msg: "Cannot access location data");
+      }
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.deniedForever) {
+          Fluttertoast.showToast(msg: "Cannot access location data");
+          return null;
+        }
+      }
+      Position position = await Geolocator.getCurrentPosition().catchError((err) {
+        Fluttertoast.showToast(msg: "Couldn't get your location");
+        setState(() {
+          isLoadingLocation = false;
+        });
+      });
+      return "${position.latitude.toStringAsFixed(5)}, ${position.longitude.toStringAsFixed(5)}";
+    } else {
+      final response = await get(Uri.parse("https://geolocation-db.com/json/"));
+      Map<String, dynamic> responseJson = json.decode(response.body.toString());
+      return "${responseJson["latitude"]}, ${responseJson["longitude"]}";
+    }
+  }
+
+  Widget buildGetLocationButton() {
+    return ElevatedButton(
+      onPressed: () async {
+        setState(() {
+          isLoadingLocation = true;
+        });
+        String? location = await getLocation();
+        if (location != null) {
+          coordsCtl.text = location;
+          GetIt.I<SurveyData>().coords = coordsCtl.text;
+        }
+        setState(() {
+          isLoadingLocation = false;
+        });
+      },
+      child: Visibility(
+        visible: !isLoadingLocation,
+        replacement: SizedBox(
+          width: Theme.of(context).textTheme.button!.fontSize,
+          height: Theme.of(context).textTheme.button!.fontSize,
+          child: CircularProgressIndicator(
+            strokeWidth: 2.0,
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
+        ),
+        child: const Text("Get Location"),
+      ),
+    );
+  }
+
+  TextFormField buildCoords() {
+    return TextFormField(
+      readOnly: true,
+      controller: coordsCtl,
+      decoration: const InputDecoration(
+        border: OutlineInputBorder(),
+        icon: Icon(Icons.location_on),
+        labelText: "GPS Position",
+      ),
+    );
+  }
 
   //
   // -------------------------------------- Building Address --------------------------------------
@@ -26,10 +113,11 @@ class _S01BuildingDescriptionFormState extends State<S01BuildingDescriptionForm>
   TextEditingController addressLine1Ctl = TextEditingController();
   TextEditingController addressLine2Ctl = TextEditingController();
   TextEditingController addressCityTownCtl = TextEditingController();
+  TextEditingController addressCountryCtl = TextEditingController(text: "India");
 
   Widget buildBuildingAddress() {
     return Card(
-      shape: const RoundedRectangleBorder(borderRadius: borderRadiusCached),
+      shape: const RoundedRectangleBorder(borderRadius: cardBorderRadius),
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -42,7 +130,7 @@ class _S01BuildingDescriptionFormState extends State<S01BuildingDescriptionForm>
             const SizedBox(height: 15),
             TextField(
               onChanged: (val) {
-                GetIt.I<Survey01Data>().buildingName = val.trim();
+                GetIt.I<SurveyData>().buildingName = val.trim();
               },
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
@@ -58,7 +146,7 @@ class _S01BuildingDescriptionFormState extends State<S01BuildingDescriptionForm>
             const SizedBox(height: 15),
             TextField(
               onChanged: (val) {
-                GetIt.I<Survey01Data>().addressLine1 = val.trim();
+                GetIt.I<SurveyData>().addressLine1 = val.trim();
               },
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
@@ -74,7 +162,7 @@ class _S01BuildingDescriptionFormState extends State<S01BuildingDescriptionForm>
             const SizedBox(height: 15),
             TextField(
               onChanged: (val) {
-                GetIt.I<Survey01Data>().addressLine2 = val.trim();
+                GetIt.I<SurveyData>().addressLine2 = val.trim();
               },
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
@@ -90,13 +178,38 @@ class _S01BuildingDescriptionFormState extends State<S01BuildingDescriptionForm>
             const SizedBox(height: 15),
             TextField(
               onChanged: (val) {
-                GetIt.I<Survey01Data>().addressCityTown = val.trim();
+                GetIt.I<SurveyData>().addressCityTown = val.trim();
               },
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 // hintText: "Enter a number",
               ),
               controller: addressCityTownCtl,
+            ),
+            const SizedBox(height: 22.0),
+            Text(
+              "Country",
+              style: Theme.of(context).textTheme.headline6,
+            ),
+            const SizedBox(height: 15),
+            TextField(
+              readOnly: true,
+              onTap: () {
+                showCountryPicker(
+                  context: context,
+                  onSelect: (country) {
+                    setState(() {
+                      addressCountryCtl.text = country.name;
+                    });
+                    GetIt.I<SurveyData>().addressCountry = country.name.trim();
+                  },
+                );
+              },
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                // hintText: "Enter a number",
+              ),
+              controller: addressCountryCtl,
             ),
           ],
         ),
@@ -112,26 +225,26 @@ class _S01BuildingDescriptionFormState extends State<S01BuildingDescriptionForm>
   void takeStructureViewPicture(int index) async {
     final XFile? xImg = await ImagePicker().pickImage(source: ImageSource.camera);
     if (xImg == null) {
-      Fluttertoast.showToast(msg: "Could not take image");
+      Fluttertoast.showToast(msg: "Did not take image");
       return;
     }
 
     // for non FLRB pictures
     if (index == -1) {
-      GetIt.I<Survey01Data>().pictures.add(null);
+      GetIt.I<SurveyData>().pictures.add(null);
       index = extraPictureNumber + 4;
     }
 
-    GetIt.I<Survey01Data>().pictures[index] = xImg;
+    GetIt.I<SurveyData>().pictures[index] = xImg;
 
     if (index <= 3) {
-      GetIt.I<Survey01Data>().picturesTaken[index] = true;
+      GetIt.I<SurveyData>().picturesTaken[index] = true;
       setState(() {
         hasTakenPicture[index] = true;
       });
     } else {
       // extra picture
-      GetIt.I<Survey01Data>().extraPicturesNumber++;
+      GetIt.I<SurveyData>().extraPicturesNumber++;
       setState(() {
         extraPictureNumber++;
       });
@@ -162,7 +275,7 @@ class _S01BuildingDescriptionFormState extends State<S01BuildingDescriptionForm>
 
   Widget buildViewsOfStructure() {
     return Card(
-      shape: const RoundedRectangleBorder(borderRadius: borderRadiusCached),
+      shape: const RoundedRectangleBorder(borderRadius: cardBorderRadius),
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -232,7 +345,7 @@ class _S01BuildingDescriptionFormState extends State<S01BuildingDescriptionForm>
 
   Widget buildExtraPictures() {
     return Card(
-      shape: const RoundedRectangleBorder(borderRadius: borderRadiusCached),
+      shape: const RoundedRectangleBorder(borderRadius: cardBorderRadius),
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -261,161 +374,33 @@ class _S01BuildingDescriptionFormState extends State<S01BuildingDescriptionForm>
   }
 
   //
-  // -------------------------------------- Occupancy --------------------------------------
-  //
-  List<Pair<bool, String>> occupancyOptions = [
-    Pair(false, "Residential"),
-    Pair(false, "Educational"),
-    Pair(false, "Lifeline"),
-    Pair(false, "Commercial"),
-    Pair(false, "Office"),
-    Pair(false, "Mixed Use"),
-    Pair(false, "Industrial"),
-    Pair(false, "Other"),
-  ];
-  int? selectedOccupancy;
-  String selectedOccupancyString = "";
-
-  Widget buildOccupancySelector() {
-    return ExpansionTileCard(
-      borderRadius: borderRadiusCached.bottomLeft.x, // equates to the .all.circular's value
-      child: ExpansionTile(
-        tilePadding: const EdgeInsets.all(20),
-        title: Text(
-          "Occupancy",
-          style: Theme.of(context).textTheme.headline6,
-        ),
-        subtitle: Text(
-          (selectedOccupancy != null) ? occupancyOptions[selectedOccupancy!].b : "None",
-          style: Theme.of(context).textTheme.bodyText2,
-        ),
-        children: List.generate(occupancyOptions.length, (index) {
-          return RadioListTile(
-            title: Text(occupancyOptions[index].b),
-            groupValue: selectedOccupancy,
-            value: index,
-            onChanged: (val) {
-              GetIt.I<Survey01Data>().occupancy = val as int;
-              GetIt.I<Survey01Data>().occupancyString = occupancyOptions[val].b;
-              GetIt.I<Survey01Data>().subOccupancy = null;
-              GetIt.I<Survey01Data>().subOccupancyString = null;
-              setState(() {
-                selectedOccupancy = val;
-                selectedOccupancyString = occupancyOptions[selectedOccupancy!].b;
-                selectedSubOccupancy = null;
-                selectedSubOccupancyString = "";
-              });
-            },
-          );
-        }),
-      ),
-    );
-  }
-
-  //
-  // -------------------------------------- Sub Occupancy --------------------------------------
-  //
-
-  List<List<Pair<bool, String>>> subOccupancyOptions = [
-    [
-      Pair(false, "Individual House"),
-      Pair(false, "Apartments"),
-    ],
-    [
-      Pair(false, "School"),
-      Pair(false, "College"),
-      Pair(false, "Institute/University"),
-    ],
-    [
-      Pair(false, "Hospital"),
-      Pair(false, "Police Station"),
-      Pair(false, "Fire Station"),
-      Pair(false, "Power Station"),
-      Pair(false, "Water Plant"),
-      Pair(false, "SewagePlant"),
-    ],
-    [
-      Pair(false, "Hotel"),
-      Pair(false, "Shopping"),
-      Pair(false, "Recreational"),
-    ],
-    [
-      Pair(false, "Government"),
-      Pair(false, "Private"),
-    ],
-    [
-      Pair(false, "Residential and Commercial"),
-      Pair(false, "Residential and Industrial"),
-    ],
-    [
-      Pair(false, "Agriculture"),
-      Pair(false, "Livestock"),
-    ],
-    [/* other */],
-  ];
-  int? selectedSubOccupancy;
-  String selectedSubOccupancyString = "";
-
-  buildSubOccupancySelector() {
-    return Visibility(
-      visible: (selectedOccupancy != null),
-      replacement: Container(),
-      child: ExpansionTileCard(
-        borderRadius: borderRadiusCached.bottomLeft.x, // equates to the .all.circular's value
-        child: ExpansionTile(
-          initiallyExpanded: true,
-          tilePadding: const EdgeInsets.all(20),
-          title: Text(
-            "Select $selectedOccupancyString Occupancy",
-            style: Theme.of(context).textTheme.headline6,
-          ),
-          subtitle: Padding(
-            padding: const EdgeInsets.only(top: 6),
-            child: Text(
-              (selectedSubOccupancy != null)
-                  ? subOccupancyOptions[selectedOccupancy ?? 0][selectedSubOccupancy!].b
-                  : "None",
-              style: Theme.of(context).textTheme.bodyText2,
-            ),
-          ),
-          children: List.generate(subOccupancyOptions[selectedOccupancy ?? 0].length, (index) {
-            return RadioListTile(
-              title: Text(subOccupancyOptions[selectedOccupancy ?? 0][index].b),
-              groupValue: selectedSubOccupancy,
-              value: index,
-              onChanged: (val) {
-                GetIt.I<Survey01Data>().subOccupancy = val as int;
-                GetIt.I<Survey01Data>().subOccupancyString = subOccupancyOptions[selectedOccupancy!][val].b;
-                setState(() {
-                  selectedSubOccupancy = val;
-                  selectedSubOccupancyString = subOccupancyOptions[selectedOccupancy!][val].b;
-                });
-              },
-            );
-          }),
-        ),
-      ),
-    );
-  }
-
-  //
   // -------------------------------------- Build --------------------------------------
   //
 
   @override
   Widget build(BuildContext context) {
-    extraPictureNumber = GetIt.I<Survey01Data>().extraPicturesNumber;
+    extraPictureNumber = GetIt.I<SurveyData>().extraPicturesNumber;
     super.build(context);
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           children: [
+            Card(
+              shape: const RoundedRectangleBorder(borderRadius: cardBorderRadius),
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  children: [
+                    buildCoords(),
+                    const SizedBox(height: 20),
+                    buildGetLocationButton(),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
             buildBuildingAddress(),
-            const SizedBox(height: 20),
-            buildOccupancySelector(),
-            const SizedBox(height: 20),
-            buildSubOccupancySelector(),
             const SizedBox(height: 20),
             buildViewsOfStructure(),
             const SizedBox(height: 20),

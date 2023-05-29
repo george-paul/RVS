@@ -1,14 +1,9 @@
 class GlobalData {
-  int surveyNumber = 1;
+  int surveyNumber = 0;
   bool cameraOpen = false;
 }
 
 const List<String> surveyTitles = [
-  "Reinforced Concrete",
-  "Burnt Clay Brick Masonry",
-  "Confined Masonry",
-  "Random Rubble Stone Masonry",
-  "Dhajji Diwari",
-  "Mud House",
-  "Ekra House",
+  "L1:M - Masonry Building",
+  "L1:RC - Reinforced Concrete Building",
 ];

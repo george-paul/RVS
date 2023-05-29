@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:get_it/get_it.dart';
 import 'firebase_options.dart';
@@ -7,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'global_data.dart';
 import 'routes.dart';
 
+// TODO: make new icon
+// TODO: make util lighter
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -23,7 +24,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    FirebaseAuth auth = FirebaseAuth.instance;
     ThemeData darkTheme = ThemeData.from(
       colorScheme: ColorScheme.fromSeed(
         seedColor: Colors.lightBlue.shade900,
@@ -45,26 +45,27 @@ class MyApp extends StatelessWidget {
     );
 
     return MaterialApp(
-      title: 'RVS',
+      title: 'PESA',
       darkTheme: darkTheme,
       theme: lightTheme,
       home: const SplashScreen(),
       routes: {
         "/login": (context) => const LoginScreen(),
         "/survey_selection": (context) => const SurveySelectionScreen(),
+        "/survey": (context) => const SurveyScreen(),
       },
       // Routes with Paramaters
-      onGenerateRoute: (settings) {
-        if (settings.name == "/survey") {
-          // give arguments as (surveyNumber)
-          final List<int> args = settings.arguments as List<int>;
-          final int sNo = args[0];
-          return MaterialPageRoute(builder: (_) => SurveyScreen(surveyNumber: sNo));
-        } else {
-          return MaterialPageRoute(
-              builder: (_) => (auth.currentUser == null) ? const LoginScreen() : const SurveySelectionScreen());
-        }
-      },
+      // onGenerateRoute: (settings) {
+      //   if (settings.name == "/survey") {
+      //     // give arguments as (surveyNumber)
+      //     final List<int> args = settings.arguments as List<int>;
+      //     final int sNo = args[0];
+      //     return MaterialPageRoute(builder: (_) => SurveyScreen(surveyNumber: sNo));
+      //   } else {
+      //     return MaterialPageRoute(
+      //         builder: (_) => (auth.currentUser == null) ? const LoginScreen() : const SurveySelectionScreen());
+      //   }
+      // },
     );
   }
 }
