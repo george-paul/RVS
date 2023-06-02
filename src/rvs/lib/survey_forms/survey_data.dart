@@ -229,7 +229,7 @@ class SurveyData {
   String suggestedInterventions = "";
 
   // form 04
-  List<bool> vulnCheckboxes = [];
+  List<bool?> vulnCheckboxes = [];
   int suggScansPicturesNumber = 0;
   List<XFile?> suggScansPictures = [];
   bool buildingToBeQuarantined = false;
@@ -318,10 +318,6 @@ class SurveyData {
       Fluttertoast.showToast(msg: "Invalid Adress");
       return;
     }
-    if (occupancy == null) {
-      Fluttertoast.showToast(msg: "Invalid Occupancy");
-      return;
-    }
 
     if (picturesTaken.contains(false)) {
       Fluttertoast.showToast(msg: "Complete the structure view photographs");
@@ -349,6 +345,10 @@ class SurveyData {
       return;
     }
 
+    if (occupancy == null) {
+      Fluttertoast.showToast(msg: "Invalid Occupancy");
+      return;
+    }
     if (otherOccupancyString != null) {
       occupancyString = otherOccupancyString;
     } else if (subOccupancyString != null) {
@@ -360,14 +360,25 @@ class SurveyData {
       subOccupancyString = "";
     }
 
+    List<vuln.VulnElement> vulnElements = vuln.getFormVulnElements(vuln.possibleElements, surveyNumber);
+    // remove checkboxes at heading indices
+    for (int i = 0; i < vulnCheckboxes.length; i++) {
+      if (vulnElements[i].runtimeType == vuln.VulnHeading) {
+        continue;
+      }
+      if (vulnCheckboxes[i] == null) {
+        Fluttertoast.showToast(msg: "Please select all vulnerability parameters");
+        return;
+      }
+    }
+
     // assemble factors temp rows
-    List<vuln.VulnElement> vulnElemets = vuln.getFormVulnElements(vuln.possibleElements, surveyNumber);
     List<List<String>> tempRows = [[], [], []];
-    for (int i = 0; i < vulnElemets.length; i++) {
-      vuln.VulnElement ele = vulnElemets[i];
+    for (int i = 0; i < vulnElements.length; i++) {
+      vuln.VulnElement ele = vulnElements[i];
       if (ele.runtimeType == vuln.VulnQuestion) {
         ele = ele as vuln.VulnQuestion;
-        if (vulnCheckboxes[i]) {
+        if (vulnCheckboxes[i]!) {
           tempRows[ele.color.index].add(ele.text);
         }
       }

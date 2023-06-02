@@ -53,7 +53,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
 
     surveyNumber = GetIt.I<GlobalData>().surveyNumber;
     List<VulnElement> vulnElements = getFormVulnElements(possibleElements, surveyNumber);
-    GetIt.I<SurveyData>().vulnCheckboxes.addAll(List.filled(vulnElements.length, false));
+    GetIt.I<SurveyData>().vulnCheckboxes.addAll(List.filled(vulnElements.length, null));
     super.initState();
   }
 
