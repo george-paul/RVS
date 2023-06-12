@@ -8,6 +8,7 @@ import 'routes.dart';
 
 // TODO: make new icon
 // TODO: make util lighter
+// FIXME: when a pdf widget is bigger than one page, it errors with "cannot be larger than 20 pages"
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(

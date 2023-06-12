@@ -232,8 +232,8 @@ class SurveyData {
   List<bool?> vulnCheckboxes = [];
   int suggScansPicturesNumber = 0;
   List<XFile?> suggScansPictures = [];
-  bool buildingToBeQuarantined = false;
-  bool detailedScreening = false;
+  bool? buildingToBeSealed;
+  bool? buildingToBeDemolished;
 
   //
   //----------------------------- Helper Functions -----------------------------
@@ -360,6 +360,15 @@ class SurveyData {
       subOccupancyString = "";
     }
 
+    if (buildingToBeSealed == null) {
+      Fluttertoast.showToast(msg: "Specify whether building is to be sealed");
+      return;
+    }
+    if (buildingToBeDemolished == null) {
+      Fluttertoast.showToast(msg: "Specify whether building is to be demolished");
+      return;
+    }
+
     List<vuln.VulnElement> vulnElements = vuln.getFormVulnElements(vuln.possibleElements, surveyNumber);
     // remove checkboxes at heading indices
     for (int i = 0; i < vulnCheckboxes.length; i++) {
@@ -429,7 +438,7 @@ class SurveyData {
     final pageTheme = pw.PageTheme(
       buildBackground: ((context) {
         return pw.Watermark.text(
-          "Rapid Visual Screening",
+          "Post-Earthquake Safety Assessment",
           style: pw.TextStyle.defaultStyle().copyWith(color: const PdfColor.fromInt(0x00dbdbdb)),
         );
       }),
@@ -502,7 +511,7 @@ class SurveyData {
                     ["Structural System", "$structSys"],
                     ["Floor Type", "$floor"],
                     ["Roof Geometry", "$roofGeo"],
-                    if (roofMat != null) ["Roof Geometry", "$roofGeo"],
+                    if (roofMat != null) ["Roof Material", "$roofMat"],
                     if (mortar != null) ["Mortar Type", "$mortar"],
                   ],
                 ),
@@ -561,8 +570,8 @@ class SurveyData {
                 pw.Table.fromTextArray(
                   headerCount: 0,
                   data: [
-                    ["Building is to be quarantined?", (buildingToBeQuarantined) ? "Yes" : "No"],
-                    ["Level 2 Detailed Screening is required?", (detailedScreening) ? "Yes" : "No"],
+                    ["Building is to be sealed?", (buildingToBeSealed!) ? "Yes" : "No"],
+                    ["Building is to be demolished?", (buildingToBeDemolished!) ? "Yes" : "No"],
                   ],
                 ),
                 pw.SizedBox(height: 30),

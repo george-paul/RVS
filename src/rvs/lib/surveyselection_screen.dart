@@ -56,9 +56,24 @@ class SurveyCard extends StatelessWidget {
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    surveyTitles[surveyNumber],
-                    style: Theme.of(context).textTheme.subtitle1,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "${surveyTitles[surveyNumber].form}\n${surveyTitles[surveyNumber].code}",
+                        style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                        textAlign: TextAlign.right,
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          surveyTitles[surveyNumber].name,
+                          style: Theme.of(context).textTheme.subtitle1,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -77,7 +92,7 @@ class SurveySelectionScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Select a Survey"),
+        title: const Text("Select a form for the survey"),
         actions: [
           IconButton(
             onPressed: () {

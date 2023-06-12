@@ -3,6 +3,7 @@ import 'package:get_it/get_it.dart';
 import 'package:rvs/survey_forms/survey_data.dart';
 
 import '../global_data.dart';
+import '../linedheading_widget.dart';
 import '../selector_widget.dart';
 
 class StructComponentsForm extends StatefulWidget {
@@ -48,6 +49,8 @@ class StructComponentsFormState extends State<StructComponentsForm> with Automat
   // ----------------------------- Roof Geo Selector -----------------------------
   //
 
+  static const int l1rcNumber = 1;
+
   TextEditingController otherRoofGeoCtl = TextEditingController();
   List<bool> selectedRoofGeo = [];
 
@@ -91,13 +94,22 @@ class StructComponentsFormState extends State<StructComponentsForm> with Automat
                 },
               ),
             const SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(10.0, 40.0, 20.0, 20.0),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text("Roof System", style: Theme.of(context).textTheme.headline5),
+            if (surveyNumber != l1rcNumber)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(10.0, 40.0, 20.0, 20.0),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: LinedHeading(
+                    label: Text(
+                      "Roof System",
+                      style: Theme.of(context).textTheme.headline5!.copyWith(
+                            fontWeight: FontWeight.bold,
+                            fontStyle: FontStyle.italic,
+                          ),
+                    ),
+                  ),
+                ),
               ),
-            ),
             if (roofMatOptions[surveyNumber].isNotEmpty)
               SelectorWidget(
                 title: "Roof Material",
@@ -110,7 +122,7 @@ class StructComponentsFormState extends State<StructComponentsForm> with Automat
               ),
             const SizedBox(height: 20),
             SelectorWidget(
-              title: "Roof Geometry",
+              title: (surveyNumber != l1rcNumber) ? "Roof Geometry" : "Roof System",
               selectedCheckboxes: selectedRoofGeo,
               options: roofGeoOptions[surveyNumber],
               otherCtl: otherRoofGeoCtl,

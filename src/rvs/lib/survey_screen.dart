@@ -80,7 +80,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
           // build
           return Scaffold(
             appBar: AppBar(
-              title: Text("PESA - ${surveyTitles[surveyNumber]}"),
+              title: Text(surveyTitles[surveyNumber].surveyScreenTitle),
               bottom: TabBar(
                 isScrollable: true,
                 tabs: tabs,

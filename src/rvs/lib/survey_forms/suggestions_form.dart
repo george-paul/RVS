@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:rvs/actionbutton_widget.dart';
 import 'package:rvs/survey_forms/survey_data.dart';
 import 'package:rvs/util.dart';
 
@@ -91,11 +92,11 @@ class SuggestionFormState extends State<SuggestionForm> with AutomaticKeepAliveC
                 const SizedBox(width: 20),
                 Text(suggScansNumber.toString(), style: Theme.of(context).textTheme.headline6),
                 const SizedBox(width: 60),
-                FloatingActionButton(
+                ActionButton(
                   onPressed: () {
                     takeSuggScanPicture();
                   },
-                  child: const Icon(Icons.camera_enhance_rounded),
+                  icon: const Icon(Icons.camera_enhance_rounded),
                 ),
               ],
             ),
@@ -109,8 +110,48 @@ class SuggestionFormState extends State<SuggestionForm> with AutomaticKeepAliveC
   // ----------------------------- Further Actions -----------------------------
   //
 
-  bool buildingToBeQuarantined = false;
-  bool detailedScreening = false;
+  bool buildingToBeSealed = false;
+  bool buildingToBeDemolished = false;
+
+  Widget radioButtonGroup(bool sealedGroup) {
+    bool? groupVal;
+    if (sealedGroup) {
+      groupVal = GetIt.I<SurveyData>().buildingToBeSealed;
+    } else {
+      groupVal = GetIt.I<SurveyData>().buildingToBeDemolished;
+    }
+
+    void Function(bool?) onChanged = (val) {
+      if (sealedGroup) {
+        GetIt.I<SurveyData>().buildingToBeSealed = val;
+      } else {
+        GetIt.I<SurveyData>().buildingToBeDemolished = val;
+      }
+      setState(() {});
+    };
+
+    return Row(
+      children: [
+        Radio(
+          visualDensity: VisualDensity.compact,
+          fillColor: MaterialStateProperty.all(Colors.lightGreen),
+          value: true,
+          groupValue: groupVal,
+          onChanged: onChanged,
+        ),
+        Text("Yes"),
+        SizedBox(width: 10),
+        Radio(
+          visualDensity: VisualDensity.compact,
+          fillColor: MaterialStateProperty.all(Colors.red),
+          value: false,
+          groupValue: groupVal,
+          onChanged: onChanged,
+        ),
+        Text("No"),
+      ],
+    );
+  }
 
   Widget buildFurtherActionsEntry() {
     return Card(
@@ -125,29 +166,11 @@ class SuggestionFormState extends State<SuggestionForm> with AutomaticKeepAliveC
               style: Theme.of(context).textTheme.headline6,
             ),
             const SizedBox(height: 15),
-            CheckboxListTile(
-              title: const Text("Building to be sealed?"),
-              value: buildingToBeQuarantined,
-              onChanged: (val) {
-                if (val == null) return;
-                setState(() {
-                  buildingToBeQuarantined = val;
-                });
-                GetIt.I<SurveyData>().buildingToBeQuarantined = val;
-              },
-            ),
+            const Text("Building to be sealed?"),
+            radioButtonGroup(true),
             const SizedBox(height: 5),
-            CheckboxListTile(
-              title: const Text("Building to be demolished?"),
-              value: detailedScreening,
-              onChanged: (val) {
-                if (val == null) return;
-                setState(() {
-                  detailedScreening = val;
-                });
-                GetIt.I<SurveyData>().detailedScreening = val;
-              },
-            )
+            const Text("Building to be demolished?"),
+            radioButtonGroup(false),
           ],
         ),
       ),

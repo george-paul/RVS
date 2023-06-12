@@ -30,13 +30,14 @@ class OccupancyFormState extends State<OccupancyForm> with AutomaticKeepAliveCli
     return ExpansionTileCard(
       borderRadius: cardBorderRadius.bottomLeft.x, // equates to the .all.circular's value
       child: ExpansionTile(
+        initiallyExpanded: true,
         tilePadding: const EdgeInsets.all(20),
         title: Text(
           "Occupancy",
           style: Theme.of(context).textTheme.headline6,
         ),
         subtitle: Text(
-          (selectedOccupancy != null) ? occupancyOptions[selectedOccupancy!].b : "None",
+          (selectedOccupancy != null) ? occupancyOptions[selectedOccupancy!].b : "None Selected",
           style: Theme.of(context).textTheme.bodyText2,
         ),
         children: List.generate(occupancyOptions.length, (index) {
@@ -120,7 +121,7 @@ class OccupancyFormState extends State<OccupancyForm> with AutomaticKeepAliveCli
             child: Text(
               (selectedSubOccupancy != null)
                   ? subOccupancyOptions[selectedOccupancy ?? 0][selectedSubOccupancy!].b
-                  : "None",
+                  : "None Selected",
               style: Theme.of(context).textTheme.bodyText2,
             ),
           ),

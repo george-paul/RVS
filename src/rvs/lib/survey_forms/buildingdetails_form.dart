@@ -10,6 +10,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart';
 import 'package:rvs/util.dart';
 
+import '../actionbutton_widget.dart';
+
 class BuildingDescriptionForm extends StatefulWidget {
   const BuildingDescriptionForm({Key? key}) : super(key: key);
 
@@ -354,16 +356,16 @@ class _BuildingDescriptionFormState extends State<BuildingDescriptionForm> with 
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Expanded(
-                  child: Text("Number of extra views added: ", style: Theme.of(context).textTheme.headline6),
+                  child: Text("Additional photographs of the building: ", style: Theme.of(context).textTheme.headline6),
                 ),
                 const SizedBox(width: 20),
                 Text(extraPictureNumber.toString(), style: Theme.of(context).textTheme.headline6),
                 const SizedBox(width: 60),
-                FloatingActionButton(
+                ActionButton(
                   onPressed: () {
                     takeStructureViewPicture(-1);
                   },
-                  child: const Icon(Icons.camera_enhance_rounded),
+                  icon: const Icon(Icons.camera_enhance_rounded),
                 ),
               ],
             ),

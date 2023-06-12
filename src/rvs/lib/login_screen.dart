@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pinput/pinput.dart';
@@ -13,14 +14,14 @@ class BackgroundCustomPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    double baseline = size.height * 0.45;
+    double baseline = size.height * 0.34;
     double unit = size.height * 0.01;
 
     // bottom-most curve
     Path curve1 = Path()
       ..moveTo(0, baseline)
-      ..cubicTo(size.width * 0.33, baseline + unit * 5, size.width * 0.66, baseline - unit * 12, size.width,
-          baseline - unit * 7)
+      ..cubicTo(size.width * 0.33, baseline - unit * 7, size.width * 0.66, baseline + unit * 8, size.width,
+          baseline - unit * 0)
       ..lineTo(size.width, 0)
       ..lineTo(0, 0);
     Paint paint1 = Paint()
@@ -32,8 +33,8 @@ class BackgroundCustomPainter extends CustomPainter {
     baseline -= unit * 5;
     Path curve2 = Path()
       ..moveTo(0, baseline)
-      ..cubicTo(size.width * 0.33, baseline + unit * 5, size.width * 0.66, baseline - unit * 12, size.width,
-          baseline - unit * 7)
+      ..cubicTo(size.width * 0.33, baseline - unit * 7, size.width * 0.66, baseline + unit * 8, size.width,
+          baseline - unit * 0)
       ..lineTo(size.width, 0)
       ..lineTo(0, 0);
     // redDB(primaryColor.toString());
@@ -47,8 +48,8 @@ class BackgroundCustomPainter extends CustomPainter {
     baseline -= unit * 5;
     Path curve3 = Path()
       ..moveTo(0, baseline)
-      ..cubicTo(size.width * 0.33, baseline + unit * 5, size.width * 0.66, baseline - unit * 12, size.width,
-          baseline - unit * 7)
+      ..cubicTo(size.width * 0.33, baseline - unit * 7, size.width * 0.66, baseline + unit * 8, size.width,
+          baseline - unit * 0)
       ..lineTo(size.width, 0)
       ..lineTo(0, 0);
     // redDB(primaryColor.toString());
@@ -134,8 +135,13 @@ class _LoginScreenState extends State<LoginScreen> {
       Fluttertoast.showToast(msg: "Signed In");
       Navigator.pushReplacementNamed(context, "/survey_selection");
     }).catchError((err) {
-      redDBG(err);
-      Fluttertoast.showToast(msg: "Something went wrong!");
+      err = err as FirebaseAuthException;
+      redDBG(err.code);
+      if (err.code == "invalid-verification-code") {
+        Fluttertoast.showToast(msg: "Incorrect OTP!");
+      } else {
+        Fluttertoast.showToast(msg: "Something went wrong!");
+      }
       setState(() {
         isLoading = false;
       });
@@ -301,14 +307,15 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Column(
                   children: [
                     Text(
-                      "Welcome to PESA",
+                      "Post-Earthquake Safety Assessment",
                       style: Theme.of(context).textTheme.displayMedium?.copyWith(
                             fontFamily: "Arvo",
+                            fontSize: 35,
                             color: Colors.white,
                           ),
                     ),
                     SizedBox(
-                      height: screenHeight * 0.18,
+                      height: screenHeight * 0.28,
                     ),
                     AnimatedSwitcher(
                       duration: const Duration(milliseconds: 1000),
@@ -338,7 +345,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: (sentOTP) ? otpField() : phoneNumberField(),
                     ),
                     SizedBox(
-                      height: screenHeight * 0.05,
+                      height: screenHeight * 0.01,
                     ),
                     submitBackButtons(context),
                   ],

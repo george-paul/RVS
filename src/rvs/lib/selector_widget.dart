@@ -27,6 +27,7 @@ class SelectorWidgetState extends State<SelectorWidget> {
     return ExpansionTileCard(
       borderRadius: cardBorderRadius.bottomLeft.x, // equates to the .all.circular's value
       child: ExpansionTile(
+        initiallyExpanded: true,
         tilePadding: const EdgeInsets.all(20),
         title: Text(
           widget.title,

@@ -71,7 +71,7 @@ String checkboxString(List<bool> checkboxes, List<Pair<bool, String>> optionList
 String prettyListString<T>(List<T> list) {
   String returnString = list.toString().substring(1, list.toString().length - 1);
   if (returnString.trim() == "") {
-    return "None";
+    return "None Selected";
   }
   return returnString;
 }
