@@ -111,7 +111,7 @@ class _InspectorDetailsFormState extends State<InspectorDetailsForm> with Automa
                       );
 
                       // siddharth: why picked != time
-                      if (picked != null && picked != time) {
+                      if (picked != null) {
                         // can ignore this prblem because localisation shouldn't change across this async gap
                         // ignore: use_build_context_synchronously
                         timeCtl.text = picked.format(context);

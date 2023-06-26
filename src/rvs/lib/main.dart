@@ -56,17 +56,19 @@ class MyApp extends StatelessWidget {
         "/survey": (context) => const SurveyScreen(),
       },
       // Routes with Paramaters
-      // onGenerateRoute: (settings) {
-      //   if (settings.name == "/survey") {
-      //     // give arguments as (surveyNumber)
-      //     final List<int> args = settings.arguments as List<int>;
-      //     final int sNo = args[0];
-      //     return MaterialPageRoute(builder: (_) => SurveyScreen(surveyNumber: sNo));
-      //   } else {
-      //     return MaterialPageRoute(
-      //         builder: (_) => (auth.currentUser == null) ? const LoginScreen() : const SurveySelectionScreen());
-      //   }
-      // },
+      onGenerateRoute: (settings) {
+        if (settings.name == "/explanation") {
+          // give arguments as (surveyNumber)
+          final String mdKeyArg = settings.arguments as String;
+          return MaterialPageRoute(
+            builder: (_) => ExplanationScreen(mdkey: mdKeyArg),
+          );
+        } else {
+          return MaterialPageRoute(
+            builder: (_) => const SplashScreen(),
+          );
+        }
+      },
     );
   }
 }

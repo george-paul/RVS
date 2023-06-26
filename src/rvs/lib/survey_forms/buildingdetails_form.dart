@@ -32,7 +32,7 @@ class _BuildingDescriptionFormState extends State<BuildingDescriptionForm> with 
   bool isLoadingLocation = false;
 
   Future<String?> getLocation() async {
-    if (!kIsWeb) {
+    try {
       bool serviceEnabled;
 
       serviceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -59,11 +59,43 @@ class _BuildingDescriptionFormState extends State<BuildingDescriptionForm> with 
         });
       });
       return "${position.latitude.toStringAsFixed(5)}, ${position.longitude.toStringAsFixed(5)}";
-    } else {
+    } catch (e) {
       final response = await get(Uri.parse("https://geolocation-db.com/json/"));
       Map<String, dynamic> responseJson = json.decode(response.body.toString());
       return "${responseJson["latitude"]}, ${responseJson["longitude"]}";
     }
+    // if (!kIsWeb) {
+    //   bool serviceEnabled;
+
+    //   serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    //   if (!serviceEnabled) {
+    //     Fluttertoast.showToast(msg: "Please enable location services");
+    //     return null;
+    //   }
+    //   LocationPermission permission;
+    //   permission = await Geolocator.checkPermission();
+    //   if (permission == LocationPermission.unableToDetermine) {
+    //     Fluttertoast.showToast(msg: "Cannot access location data");
+    //   }
+    //   if (permission == LocationPermission.denied) {
+    //     permission = await Geolocator.requestPermission();
+    //     if (permission == LocationPermission.deniedForever) {
+    //       Fluttertoast.showToast(msg: "Cannot access location data");
+    //       return null;
+    //     }
+    //   }
+    //   Position position = await Geolocator.getCurrentPosition().catchError((err) {
+    //     Fluttertoast.showToast(msg: "Couldn't get your location");
+    //     setState(() {
+    //       isLoadingLocation = false;
+    //     });
+    //   });
+    //   return "${position.latitude.toStringAsFixed(5)}, ${position.longitude.toStringAsFixed(5)}";
+    // } else {
+    //   final response = await get(Uri.parse("https://geolocation-db.com/json/"));
+    //   Map<String, dynamic> responseJson = json.decode(response.body.toString());
+    //   return "${responseJson["latitude"]}, ${responseJson["longitude"]}";
+    // }
   }
 
   Widget buildGetLocationButton() {

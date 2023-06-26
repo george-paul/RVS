@@ -13,6 +13,10 @@ class SurveyTitle {
   String get surveyScreenTitle {
     return "$code - $name";
   }
+
+  String get surveyPdfTitle {
+    return "$form $code - $name";
+  }
 }
 
 const List<SurveyTitle> surveyTitles = [
