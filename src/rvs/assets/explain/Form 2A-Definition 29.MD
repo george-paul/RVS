@@ -1,0 +1,3 @@
+# Structural Aspects and Components 
+## 14) Separation of infill wall - frame, with no damage in columns
+**Un-Reinforced Masonry infills interfere with lateral deformation of beams and columns of buildings during earthquake shaking and significantly influence seismic behaviour of buildings by participating in lateral force transfer. Seperation at the frame and infill wall junction causes damage to the buildings.*

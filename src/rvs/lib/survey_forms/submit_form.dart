@@ -17,7 +17,16 @@ class _SubmitFormState extends State<SubmitForm> {
   bool isLoading = false;
 
   void generatePDF() async {
-    GetIt.I<SurveyData>().calcPESA();
+    // // show loading spinner for 5 seconds
+    // Future.delayed(Duration(seconds: 5), () {
+    // });
+    setState(() {
+      isLoading = true;
+    });
+    await GetIt.I<SurveyData>().calcPESA();
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
@@ -34,9 +43,11 @@ class _SubmitFormState extends State<SubmitForm> {
             ),
             SizedBox(height: 10),
             ElevatedButton(
-              onPressed: () {
-                generatePDF();
-              },
+              onPressed: (isLoading)
+                  ? null
+                  : () {
+                      generatePDF();
+                    },
               child: Visibility(
                 visible: isLoading,
                 replacement: Text("Generate"),

@@ -1,0 +1,3 @@
+# Architecture Features and Elements 
+## 4) Plan aspect ratio of the building is more than 5
+**During earthquake shaking, the inertia force generated is mobilized in the buildings, generally at floor levels to the lateral load resisting systems, "Rigid Diaphram Action. If the plan aspect ratio is greater than 5, the floor slab deforms in its own plane causing uneven distribution of loads,overstressing weak lateral load elements and thus causing undue damage. Check whethre plan aspect ratio is more than 5*

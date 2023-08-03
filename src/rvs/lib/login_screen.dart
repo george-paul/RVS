@@ -108,6 +108,7 @@ class _LoginScreenState extends State<LoginScreen> {
         phoneNumber: "+91${numberController.text}",
         verificationCompleted: (PhoneAuthCredential credential) {},
         verificationFailed: (FirebaseAuthException e) {
+          greenDBG(e.toString());
           Fluttertoast.showToast(msg: "Something went wrong!");
           setState(() {
             isLoading = false;

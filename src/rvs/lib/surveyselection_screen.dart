@@ -1,3 +1,4 @@
+import 'package:flutter/scheduler.dart';
 import 'package:rvs/global_data.dart';
 
 import 'survey_forms/survey_data.dart';
@@ -23,6 +24,12 @@ class SurveyCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (FirebaseAuth.instance.currentUser == null) {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        Navigator.of(context).pushNamed("/login");
+      });
+    }
+
     double imageSize = MediaQuery.of(context).size.width / 4;
 
     return Padding(

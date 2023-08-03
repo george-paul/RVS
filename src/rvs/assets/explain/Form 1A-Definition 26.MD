@@ -1,0 +1,3 @@
+# Structural Aspects and Components 
+## 15) Crushed masonry at wall base or at any level
+**Crushing of the compressed toe of a masonry wall is indication of the ultimate state of a masonry wall peir undergoing in-plane rocking response, and in-plane shear-resisting mecahnism. The vertical load-carrying capacity is compromised after shear failure in the in-plane wall, which typically support the roof or floor system.*

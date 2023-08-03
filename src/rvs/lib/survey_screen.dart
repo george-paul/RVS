@@ -1,3 +1,4 @@
+import 'package:flutter/scheduler.dart';
 import 'package:rvs/vulnerability_element.dart';
 
 import './global_data.dart';
@@ -24,6 +25,12 @@ class _SurveyScreenState extends State<SurveyScreen> {
 
   @override
   void initState() {
+    if (!GetIt.I.isRegistered<SurveyData>()) {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        Navigator.of(context).pushNamed("/survey_selection");
+      });
+    }
+
     tabViews = [
       const InspectorDetailsForm(),
       const BuildingDescriptionForm(),

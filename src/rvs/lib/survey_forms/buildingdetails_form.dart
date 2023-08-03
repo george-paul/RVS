@@ -60,10 +60,21 @@ class _BuildingDescriptionFormState extends State<BuildingDescriptionForm> with 
       });
       return "${position.latitude.toStringAsFixed(5)}, ${position.longitude.toStringAsFixed(5)}";
     } catch (e) {
+      redDBG(e.toString());
+    }
+
+    String? approxLoc;
+    try {
       final response = await get(Uri.parse("https://geolocation-db.com/json/"));
       Map<String, dynamic> responseJson = json.decode(response.body.toString());
-      return "${responseJson["latitude"]}, ${responseJson["longitude"]}";
+      approxLoc = "${responseJson["latitude"]}, ${responseJson["longitude"]}";
+      Fluttertoast.showToast(msg: "Couldn't get precise location, using approximate location instead.");
+    } on Exception catch (e) {
+      Fluttertoast.showToast(msg: "Couldn't get location");
+      return null;
     }
+    return approxLoc;
+
     // if (!kIsWeb) {
     //   bool serviceEnabled;
 

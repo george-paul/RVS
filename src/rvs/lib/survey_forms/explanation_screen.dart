@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class ExplanationScreen extends StatefulWidget {
   final String mdkey;
@@ -15,7 +16,13 @@ class _ExplanationScreenState extends State<ExplanationScreen> {
   bool isLoading = true;
 
   void getData() async {
-    String mdString = await rootBundle.loadString('assets/explain/default.md');
+    // default MD
+    String mdString = "# Could not find this definiton";
+    try {
+      mdString = await rootBundle.loadString('assets/explain/${widget.mdkey}.MD');
+    } on Exception catch (e) {
+      Fluttertoast.showToast(msg: "Could not find this definition");
+    }
 
     setState(() {
       mdData = mdString;

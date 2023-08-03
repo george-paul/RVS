@@ -14,7 +14,6 @@ class SuggestionForm extends StatefulWidget {
 }
 
 class SuggestionFormState extends State<SuggestionForm> with AutomaticKeepAliveClientMixin {
-  bool calcDone = false;
   String colorRating = "";
   Color colorRatingColor = Colors.red;
   bool isLoading = false;

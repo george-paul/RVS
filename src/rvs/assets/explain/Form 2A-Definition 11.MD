@@ -1,0 +1,3 @@
+# Architecture Features and Elements 
+## 3) Openings in infill masonry walls are cracked at corners
+**The walls with large openings develop diagonal cracks . The piers between the openings are more flexible than the portion of wall belwo or above the openings. Sections at the top and bottom of the opening are worst stressed. Rhe stress reversals subject both top and bottom forces to be in tension, and the cracks are developed at openings.*

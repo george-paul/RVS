@@ -352,8 +352,8 @@ class SurveyData {
               mainAxisSize: pw.MainAxisSize.max,
               mainAxisAlignment: pw.MainAxisAlignment.spaceAround,
               children: [
-                imageWidgetList[0],
-                imageWidgetList[1],
+                pw.Expanded(child: imageWidgetList[0]),
+                pw.Expanded(child: imageWidgetList[1]),
               ],
             ),
           ),
@@ -370,8 +370,8 @@ class SurveyData {
               mainAxisSize: pw.MainAxisSize.max,
               mainAxisAlignment: pw.MainAxisAlignment.spaceAround,
               children: [
-                imageWidgetList[4],
-                imageWidgetList[5],
+                pw.Expanded(child: imageWidgetList[4]),
+                pw.Expanded(child: imageWidgetList[5]),
               ],
             ),
           ),
@@ -502,7 +502,7 @@ class SurveyData {
   //----------------------------- Calculation and Validation -----------------------------
   //
 
-  void calcPESA() async {
+  Future<void> calcPESA() async {
     GetIt.I<SurveyData>().calcDone = false;
     final int surveyNumber = GetIt.I<GlobalData>().surveyNumber;
 

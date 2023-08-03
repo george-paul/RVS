@@ -17,7 +17,6 @@ class _InspectorDetailsFormState extends State<InspectorDetailsForm> with Automa
   TextEditingController dateCtl = TextEditingController();
   TextEditingController timeCtl = TextEditingController();
   TextEditingController coordsCtl = TextEditingController();
-  bool isLoadingLocation = false;
 
   @override
   void initState() {
