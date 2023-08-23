@@ -402,7 +402,7 @@ class SurveyData {
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
         pw.Container(
-          margin: pw.EdgeInsets.symmetric(vertical: 5),
+          margin: const pw.EdgeInsets.symmetric(vertical: 5),
           height: 20,
           child: pw.Align(
             alignment: pw.Alignment.bottomLeft,
@@ -416,7 +416,7 @@ class SurveyData {
           // borderSide appears on the middle of the actual border (I think)
           height: 20 + 1 + 3 + 1,
           child: pw.Padding(
-            padding: pw.EdgeInsets.only(bottom: 20),
+            padding: const pw.EdgeInsets.only(bottom: 20),
             child: pw.Container(
               decoration: pw.BoxDecoration(
                 border: pw.Border(
@@ -441,7 +441,7 @@ class SurveyData {
           // borderSide appears on the middle of the actual border (I think)
           height: 20 + 1 + 3 + 1,
           child: pw.Padding(
-            padding: pw.EdgeInsets.only(top: 20),
+            padding: const pw.EdgeInsets.only(top: 20),
             child: pw.Container(
               decoration: pw.BoxDecoration(
                 border: pw.Border(
@@ -454,7 +454,7 @@ class SurveyData {
           ),
         ),
         pw.Container(
-          margin: pw.EdgeInsets.symmetric(vertical: 5),
+          margin: const pw.EdgeInsets.symmetric(vertical: 5),
           height: 20,
           child: pw.Align(
             alignment: pw.Alignment.topRight,
@@ -468,7 +468,7 @@ class SurveyData {
     );
   }
 
-  pw.Page imagePage(pw.MemoryImage img, String caption) {
+  pw.Page buildImagePage(pw.MemoryImage img, String caption) {
     const double imagePageCaptionHeight = 50;
     double pageWidth = PdfPageFormat.a4.width;
     double scaleFactor = pageWidth / img.width!;
@@ -779,7 +779,7 @@ class SurveyData {
               ],
             ),
             pw.SizedBox(height: 30),
-            pdfSubheading("Life Threatening Parameters", context),
+            pdfSubheading("Vulnerability Parameters", context),
             pw.SizedBox(height: 10),
             if (pdfTableRows.isNotEmpty)
               pw.Table.fromTextArray(
@@ -862,7 +862,7 @@ class SurveyData {
       for (int k = 0; k < extraViewMemImages.length; k++) {
         pw.MemoryImage img = extraViewMemImages[k];
         pdf.addPage(
-          imagePage(
+          buildImagePage(
             img,
             "Extra Building View #${k + 1}",
           ),
@@ -878,7 +878,7 @@ class SurveyData {
     for (int k = 0; k < suggScanMemImages.length; k++) {
       pw.MemoryImage img = suggScanMemImages[k];
       pdf.addPage(
-        imagePage(
+        buildImagePage(
           img,
           "Aditional Scan #${k + 1}",
         ),
