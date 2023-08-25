@@ -19,8 +19,8 @@ class _ExplanationScreenState extends State<ExplanationScreen> {
     // default MD
     String mdString = "# Could not find this definiton";
     try {
-      // mdString = await rootBundle.loadString('assets/explain/${widget.mdkey}.MD');
-      mdString = await rootBundle.loadString('assets/explain/default.MD');
+      mdString = await rootBundle.loadString('assets/explain/${widget.mdkey}.MD');
+      // mdString = await rootBundle.loadString('assets/explain/default.MD');
     } on Exception catch (e) {
       Fluttertoast.showToast(msg: "Could not find this definition");
     }

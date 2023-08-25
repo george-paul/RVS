@@ -32,22 +32,22 @@ class _SurveyScreenState extends State<SurveyScreen> {
     }
 
     tabViews = [
-      const InspectorDetailsForm(),
+      // const InspectorDetailsForm(),
       const BuildingDescriptionForm(),
-      const StructSysForm(),
-      const StructComponentsForm(),
-      const OccupancyForm(),
-      const VulnerabilityForm(),
+      // const StructSysForm(),
+      // const StructComponentsForm(),
+      // const OccupancyForm(),
+      // const VulnerabilityForm(),
       const SuggestionForm(),
       const SubmitForm(),
     ];
     tabTitles = [
-      "Inspector Details",
+      // "Inspector Details",
       "Building Description",
-      "Structural System",
-      "Structural Components",
-      "Occupancy",
-      "Vulnerability",
+      // "Structural System",
+      // "Structural Components",
+      // "Occupancy",
+      // "Vulnerability",
       "Suggestions",
       "Submit",
     ];
